@@ -25,8 +25,8 @@
         }
         
 
-        .drag1 { background: #42d692; left: 100px; top: 200px;}
-        .drag2 { background: #4986e7; left: 100px; top: 350px;}
+        .drag1 { background: #42d692; left: 100px; top: 100px;}
+        .drag2 { background: #4986e7; left: 100px; top: 250px;}
 
         .highlight {
     background: yellow;
@@ -60,8 +60,11 @@
             prevent_default: true,
             no_mouseevents: true
          });
-            
-        hammertime.on("touch", function(ev) {
+    
+    var timestamp=0;
+    
+
+        hammertime.on("touch",  function(ev) {
             var touches = ev.gesture.touches;
             
             ev.gesture.preventDefault();
@@ -69,8 +72,12 @@
                 for(var t=0,len=touches.length; t<len; t++) {
                     var target = $(touches[t].target);
                     target.toggleClass("highlight");
-                    //console.log(target);
                     target[0].textContent=len;
+                    timestamp = Date.now();
+                    
+                    console.log(timestamp);
+                    
+                    
                 }
             
         });   
@@ -79,7 +86,8 @@
             var hammertime2 = Hammer(document.getElementById('rect2'), { 
             prevent_default: true,
             no_mouseevents: true
-         });
+             });
+    
             
         hammertime2.on("touch", function(ev) {
             var touches = ev.gesture.touches;
@@ -90,10 +98,23 @@
                     var target = $(touches[t].target);
                     target.toggleClass("highlight");
 
+                    
                     target[0].textContent=len;
+                    
+                    console.log(Date.now(), timestamp);
+                    if (Date.now()-timestamp<3000){
+                        console.log("object captured");
+                    }else{
+                        console.log("object lost");
+                    }
+                    timestamp = 0;
+                    
                 }
             
         });
+    
+    
+    
 
 
 </script>
