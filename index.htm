@@ -1,123 +1,78 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>touchbuttons</title>
-    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
-    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-    <style>
-        body {
-            padding: 0;
-            overflow: hidden;
-        }
-
-        
-        h1 {
-            margin: 30px;
-            text-align: center;
-        }
-
-        .drag {
-            position: absolute;
-            background: #9fe1e7;
-            border-radius: 0px;
-            width: 100px;
-            height: 100px;
-        }
-        
-
-        .drag1 { background: #42d692; left: 100px; top: 100px;}
-        .drag2 { background: #4986e7; left: 100px; top: 250px;}
-
-        .highlight {
-    background: yellow;
-  }
-
-    </style>
-</head>
-
-<body id="body">
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>touchbuttons</title>
+        <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
     
+        <audio id="soundYe" style="display: none;">
+      <source src="horse.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="soundNo" style="display: none;">
+      <source src="buzz.mp3" type="audio/mpeg">
+        </audio>
 
-<h1>Touch the squares!</h1>
+        <style>
+            body {
+                padding: 0;
+                overflow: hidden;
+            }
 
-
-<div class="drag drag1" id="rect1">t</div>
-<div class="drag drag2" id="rect2">t</div>
-
-<!-- jQuery is just for the demo! Hammer.js works without jQuery :-) -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-<script src="libs/modernizr.js"></script>
-
-<script src="libs/hammer.js"></script>
-<script src="libs/hammer.fakemultitouch.js"></script>
-<script src="libs/hammer.showtouches.js"></script>
-<script src="libs/jquery.hammer.js"></script>
-<script>
-        //Hammer.plugins.showTouches();
-        Hammer.plugins.fakeMultitouch();
+            h1 {
+                margin: 30px;
+                text-align: center;
+            }
     
-        var hammertime = Hammer(document.getElementById('rect1'), { 
-            prevent_default: true,
-            no_mouseevents: true
-         });
-    
-    var timestamp=0;
-    
+            .square {
+                position: absolute;
+                background: #9fe1e7;
+                border-radius: 0px;
+                width: 200px;
+                height: 400px;
+            }
 
-        hammertime.on("touch",  function(ev) {
-            var touches = ev.gesture.touches;
+            .square1 { background: #42d692; left: 100px; top: 100px;}
+            .square2 { background: #4986e7; left: 400px; top: 100px;}
+            .square3 { background: #d64242; left: 700px; top: 100px;}
+    
+            .highlight{background: yellow;}
+    
+        </style>
+    </head>
+    
+    <body id="body">
+    <h1>Touch the squares!</h1>
+    <div class="square square1" id="rect_green">t</div>
+    <div class="square square2" id="rect_blue">t</div>
+    <div class="square square3" id="rect_red">t</div>
+    
+    <script>
+    var itemInHand = 0;
+    var soundYe=document.getElementById("soundYe");
+    var soundNo=document.getElementById("soundNo");
+
+    var obj = new Array('green', 'blue', 'red');
+    for(i=0;i<=2;i++){
+
+        obj[i] = document.getElementById('rect_'+obj[i]);
+        obj[i].addEventListener('touchstart', function(event) {
+            soundYe.pause(); soundNo.pause();
             
-            ev.gesture.preventDefault();
+            if ('rect_'+itemInHand==this.getAttribute("id")){
+                 //this.textContent = "YEEES";
+                soundYe.play();
+            }else{
+                //this.textContent = "NOOOO";
+                soundNo.play();
+            }
 
-                for(var t=0,len=touches.length; t<len; t++) {
-                    var target = $(touches[t].target);
-                    target.toggleClass("highlight");
-                    target[0].textContent=len;
-                    timestamp = Date.now();
-                    
-                    console.log(timestamp);
-                    
-                    
-                }
-            
-        });   
-        
-    
-            var hammertime2 = Hammer(document.getElementById('rect2'), { 
-            prevent_default: true,
-            no_mouseevents: true
-             });
-    
-            
-        hammertime2.on("touch", function(ev) {
-            var touches = ev.gesture.touches;
-            
-            ev.gesture.preventDefault();
+        }, false);
 
-                for(var t=0,len=touches.length; t<len; t++) {
-                    var target = $(touches[t].target);
-                    target.toggleClass("highlight");
-
-                    
-                    target[0].textContent=len;
-                    
-                    console.log(Date.now(), timestamp);
-                    if (Date.now()-timestamp<3000){
-                        console.log("object captured");
-                    }else{
-                        console.log("object lost");
-                    }
-                    timestamp = 0;
-                    
-                }
-            
-        });
     
+    }
     
-    
-
-
-</script>
-<script src="libs/ga.js"></script>
-</body>
-</html>
+    document.body.addEventListener('touchmove', function(event) {  event.preventDefault();}, false);
+    </script>
+    </body>
+    </html>
