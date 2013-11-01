@@ -9,13 +9,16 @@ function HiddenObject(color, size, position) {
 	this.audioFound.volume = 1;
 	
 	this.rect = document.getElementById('rect_' + color);
-	this.rect.addEventListener('touchstart', this.checkDrop.bind(this));
+
+    Hammer(this.rect).on('touch', this.checkDrop.bind(this));
+    this.rect.addEventListener('touchstart', this.checkDrop.bind(this));
 }
 HiddenObject.prototype.destruct = function() {
 	scene.remove(this.mesh);
 	objects.splice(objects.indexOf(this),1);
 };
 HiddenObject.prototype.checkDrop = function() {
+
 
 	var soundYe=document.getElementById("soundYe");
 	var soundNo=document.getElementById("soundNo");

@@ -1,11 +1,18 @@
 <html>
 <head>
-	<script src='js/lib/zig.js'></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>1
+
+    <script src='js/lib/zig.js'></script>
 	<script src='js/lib/three.js'></script>
+    <script src="js/lib/hammer.js"></script>
+    <script src="js/lib/hammer.fakemultitouch.js"></script>
+    <script src="js/lib/hammer.showtouches.js"></script>
+
 	<script src='js/THREE.mesh.prototype.js'></script>
 	<script src='js/User.js'></script>
 	<script src='js/HiddenObject.js'></script>
 	<script src='js/ProximityAudio.js'></script>
+    <script src='js/createObject.js'></script>
 <script type="text/javascript">
 var scene;
 var audio;
@@ -19,6 +26,11 @@ function init() {
 	// make sure you add <div id='radar'></div> to your html body
 	initZig();
 	initThree();
+    createObject();
+
+    Hammer.plugins.showTouches();
+    Hammer.plugins.fakeMultitouch();
+
 	audio = new ProximityAudio();
 	
 	HiddenObject.generateObjects(
@@ -97,15 +109,30 @@ body {
 #touch {
 	display: block;
 	float: left;
-	width: 50%;
+	width: 48%;
 	height: 100%;
+
+}
+
+#touch {
+    border: 1px solid grey;
+}
+#explanation{
+    text-align:center;
+    width:inherit;
+    bottom: 20px;
+    font-family:sans-serif;
+    position: absolute;
+    background:#fff79b;
 }
 
 .square {
 	float: left;
-	width: 200px;
-	height: 400px;
-	margin: 100px 50px;
+	width: 100px;
+	height: 100px;
+	margin: 10px 5px;
+    opacity: 0.4;
+
 }
 
 #rect_green { background: green;}
@@ -127,18 +154,23 @@ canvas {
 <audio id="audio_green" src="audio/green.wav" preload="auto"></audio>
 <audio id="audio_blue" src="audio/blue.wav" preload="auto"></audio>
 <audio id="audio_ping" src="audio/ping.wav" preload="auto"></audio>
-<audio id="soundYe" preload="auto">
-	<source src="audio/horse.mp3" type="audio/mpeg">
-</audio>
-<audio id="soundNo" preload="auto">
-	<source src="audio/buzz.mp3" type="audio/mpeg">
-</audio>
+<audio id="soundYe" src="audio/horse.mp3" preload="auto"></audio>
+<audio id="soundNo" src="audio/buzz.mp3" preload="auto"></audio>
 
 <div id="three"></div>
 <div id="touch">
-    <div class="square" id="rect_green">t</div>
-    <div class="square" id="rect_blue">t</div>
-    <div class="square" id="rect_red">t</div>
+    <div id="explanation">
+    Pinch-zoom here to create new squares <br>
+    Hold shift to emulate on desktop <br>
+    Don't use touch emulation in Chrome
+    </div>
+
+    <div class="square" id="rect_green"></div>
+    <div class="square" id="rect_blue"></div>
+    <div class="square" id="rect_red"></div>
 </div>
+
+
+
 </body>
 </html>
