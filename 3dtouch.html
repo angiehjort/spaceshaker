@@ -1,0 +1,144 @@
+<html>
+<head>
+	<script src='js/lib/zig.js'></script>
+	<script src='js/lib/three.js'></script>
+	<script src='js/THREE.mesh.prototype.js'></script>
+	<script src='js/User.js'></script>
+	<script src='js/HiddenObject.js'></script>
+	<script src='js/ProximityAudio.js'></script>
+<script type="text/javascript">
+var scene;
+var audio;
+
+var users   = new Array();
+var objects = new Array();
+
+var boundaries ;
+
+function init() {
+	// make sure you add <div id='radar'></div> to your html body
+	initZig();
+	initThree();
+	audio = new ProximityAudio();
+	
+	HiddenObject.generateObjects(
+		['red', 'green', 'blue'],
+		{
+			x: { min: -500,	max: 500  },
+			y: { min: 0,	max: 700 },
+			z: { min: 1200,	max: 1600 }
+		},
+		{
+			w: 200, h: 200, d: 200
+		}
+	);
+	//objects.push(new HiddenObject('red', {width: 300, height: 300, depth: 300 }, {x: -500, y: 500, z: 2100}));
+	//objects.push(new HiddenObject('blue', {width: 300, height: 300, depth: 300 }, {x: 400, y: 500, z: 1400}));
+	//objects.push(new HiddenObject('green', {width: 300, height: 300, depth: 300 }, {x: 1000, y: 100, z: 3000}));
+}
+function initZig() {
+	zig.addListener({
+		
+		onuserfound: function(user) {
+			users[user.id] = new User(user);
+		},
+		
+		onuserlost: function(user) {
+			console.log(users);
+			console.log(user.id);
+			users[user.id].destruct();
+		}	
+	});
+}
+function initThree() {
+	
+	// prepare
+	scene = new THREE.Scene();
+	var camera = new THREE.PerspectiveCamera( 75, (window.innerWidth/2) / window.innerHeight, 1, 100000 );
+	var renderer = new THREE.WebGLRenderer();
+	var light = new THREE.PointLight( 0xFFFFFF );
+	
+	// scene
+	renderer.setSize( window.innerWidth/2, window.innerHeight );
+	document.getElementById('three').appendChild( renderer.domElement );
+	
+	// camera
+	camera.position.x = 0;
+	camera.position.y = 0;
+	camera.position.z = 0;
+	camera.lookAt(new THREE.Vector3(0, 0, 4000));
+	camera.rotation.z = 90 * Math.PI / 180;
+	//camera.scale = new THREE.Vector3( 1, -1, 1 );
+	//camera.translateX(-1000);
+	
+	// lights
+	light.position.set( 10, 0, 10 );
+	scene.add(light);
+	
+	// action!
+	function render() {
+		requestAnimationFrame(render);
+		
+		renderer.render(scene, camera);
+	}
+	render();	
+}
+
+
+document.addEventListener('DOMContentLoaded', init, false);
+
+</script>
+<style>
+body {
+	margin: 0;
+	padding: 0;
+}
+#three,
+#touch {
+	display: block;
+	float: left;
+	width: 50%;
+	height: 100%;
+}
+
+.square {
+	float: left;
+	width: 200px;
+	height: 400px;
+	margin: 100px 50px;
+}
+
+#rect_green { background: green;}
+#rect_blue { background: blue; }
+#rect_red { background: red; }
+
+.highlight{ background: yellow;}
+
+audio {
+	display: none;
+}
+canvas {
+	-webkit-transform: scaleY(-1);
+}
+</style>
+</head>
+<body>
+<audio id="audio_red" src="audio/red.wav" preload="auto"></audio>
+<audio id="audio_green" src="audio/green.wav" preload="auto"></audio>
+<audio id="audio_blue" src="audio/blue.wav" preload="auto"></audio>
+<audio id="audio_ping" src="audio/ping.wav" preload="auto"></audio>
+<audio id="soundYe" preload="auto">
+	<source src="audio/horse.mp3" type="audio/mpeg">
+</audio>
+<audio id="soundNo" preload="auto">
+	<source src="audio/buzz.mp3" type="audio/mpeg">
+</audio>
+
+<div id="three"></div>
+<div id="touch">
+    <div class="square" id="rect_green">t</div>
+    <div class="square" id="rect_blue">t</div>
+    <div class="square" id="rect_red">t</div>
+</div>
+</body>
+</html>
