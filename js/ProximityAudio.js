@@ -17,7 +17,7 @@ ProximityAudio.prototype.updateFreq = function(freq) {
 };
 ProximityAudio.prototype.updateGain = function(gain) {
 	this.gainNode.gain.value = gain;
-	console.log(gain);
+	//console.log(gain);
 };
 ProximityAudio.prototype.stop = function() {
 	this.gainNode.disconnect();

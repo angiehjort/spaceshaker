@@ -34,7 +34,7 @@ function init() {
 	audio = new ProximityAudio();
 	
 	HiddenObject.generateObjects(
-		['red', 'green', 'blue'],
+		['red'],//, 'green', 'blue'],
 		{
 			x: { min: -500,	max: 500  },
 			y: { min: 0,	max: 700 },
@@ -79,7 +79,7 @@ function initThree() {
 	camera.position.y = 0;
 	camera.position.z = 0;
 	camera.lookAt(new THREE.Vector3(0, 0, 4000));
-	camera.rotation.z = 90 * Math.PI / 180;
+	camera.rotation.z = 0 * Math.PI / 180;
 	//camera.scale = new THREE.Vector3( 1, -1, 1 );
 	//camera.translateX(-1000);
 	

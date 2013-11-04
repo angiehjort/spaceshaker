@@ -1,8 +1,9 @@
 function HiddenObject(color, size, position) {
 	this.material = new THREE.MeshLambertMaterial( { color: color, transparent: true } );
-	this.material.opacity = 0.9;
+	this.material.opacity = 0.5;
 	this.mesh = new THREE.Mesh( new THREE.CubeGeometry(size.width, size.height, size.depth), this.material );
 	this.mesh.position = position;
+    this.mesh.geometry.dynamic = true;
 	scene.add(this.mesh);
 	
 	this.audioFound = document.getElementById('audio_' + color);
@@ -57,3 +58,23 @@ HiddenObject.generateObjects = function(c, b, s) {
 		console.log(color + ' object generated: ', coords);
 	}
 };
+HiddenObject.createNew = function(color, s, p) {
+    objects.push(new HiddenObject(color, {width: s.w, height: s.h, depth: s.d }, {x: p.x, y: p.y, z: p.z}));
+	console.log(color + ' object generated: ', coords);
+};
+
+HiddenObject.prototype.growY = function(h) {
+    if(h!=null){
+        delta = h-this.mesh.geometry.height;
+        this.mesh.geometry.vertices[0].y += delta;
+        this.mesh.geometry.vertices[1].y += delta;
+        this.mesh.geometry.vertices[4].y += delta;
+        this.mesh.geometry.vertices[5].y += delta;
+        this.mesh.geometry.height=h;
+    }
+    this.mesh.geometry.verticesNeedUpdate = true;
+
+    return 'object size updated';
+};
+
+
