@@ -2,6 +2,7 @@ function User(kinectUser) {
     this.kinectUser = kinectUser;
     this.kinectUser.addEventListener('userupdate', this.updateFromKinect.bind(this));
 
+    this.settingBaseOf = null;
     this.settingHeightOf = null;
     this.carries = null;
     material = new THREE.MeshLambertMaterial({

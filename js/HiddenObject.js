@@ -1,18 +1,30 @@
 function HiddenObject(color, size, position) {
+    //defaults
+    if (color == null) color = 'pink';
+    if (size == null) size = {width: 100, height: 100, depth: 100};
+    if (position == null) position = {x: 0, y: -400, z: 1200};
+
 	this.material = new THREE.MeshLambertMaterial( { color: color, transparent: true } );
 	this.material.opacity = 0.5;
 	this.mesh = new THREE.Mesh( new THREE.CubeGeometry(size.width, size.height, size.depth), this.material );
 	this.mesh.position = position;
     this.mesh.geometry.dynamic = true;
 	scene.add(this.mesh);
+    //scene.add(objects[objects.length - 1].mesh);
+
 	
 	this.audioFound = document.getElementById('audio_' + color);
 	this.audioFound.volume = 1;
-	
-	this.rect = document.getElementById('rect_' + color);
 
-    Hammer(this.rect).on('touch', this.checkDrop.bind(this));
-    this.rect.addEventListener('touchstart', this.checkDrop.bind(this));
+    this.newDiv = document.createElement('div');
+    this.newDiv.id = 'newDiv';
+    this.newDiv.classList.add('square');
+    this.newDiv.classList.add('newDiv');
+    this.newDiv.style.background = color;
+    touchArea.touchable.appendChild(this.newDiv);
+    //this.newDiv.appendTo(touchArea.touchable);
+
+    Hammer(this.newDiv).on('touch', this.checkDrop.bind(this));
 }
 HiddenObject.prototype.destruct = function() {
 	scene.remove(this.mesh);

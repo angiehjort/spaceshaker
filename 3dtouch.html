@@ -1,6 +1,6 @@
 <html>
 <head>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>1
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 
     <script src='js/lib/zig.js'></script>
 	<script src='js/lib/three.js'></script>
@@ -12,7 +12,8 @@
 	<script src='js/User.js'></script>
 	<script src='js/HiddenObject.js'></script>
 	<script src='js/ProximityAudio.js'></script>
-    <script src='js/createObject.js'></script>
+    <script src='js/TouchArea.js'></script>
+    <script src='js/Explanation.js'></script>
 <script type="text/javascript">
 var scene;
 var audio;
@@ -26,11 +27,12 @@ function init() {
 	// make sure you add <div id='radar'></div> to your html body
 	initZig();
 	initThree();
-    createObject();
 
     Hammer.plugins.showTouches();
     Hammer.plugins.fakeMultitouch();
 
+    touchArea = new TouchArea(document.getElementById('touch'));
+    explanation = new Explanation(document.getElementById('explanation'));
 	audio = new ProximityAudio();
 	
 	HiddenObject.generateObjects(
@@ -132,7 +134,11 @@ body {
 	height: 100px;
 	margin: 10px 5px;
     opacity: 0.4;
+}
 
+.newDiv {
+    border: 5px solid yellow;
+    border-radius: 20px;
 }
 
 #rect_green { background: green;}
@@ -165,9 +171,7 @@ canvas {
     Don't use touch emulation in Chrome
     </div>
 
-    <div class="square" id="rect_green"></div>
-    <div class="square" id="rect_blue"></div>
-    <div class="square" id="rect_red"></div>
+
 </div>
 
 
