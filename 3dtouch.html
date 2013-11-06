@@ -14,6 +14,7 @@
 	<script src='js/ProximityAudio.js'></script>
     <script src='js/TouchArea.js'></script>
     <script src='js/Explanation.js'></script>
+
 <script type="text/javascript">
 var scene;
 var audio;
@@ -54,13 +55,13 @@ function initZig() {
 	zig.addListener({
 		
 		onuserfound: function(user) {
-			users[user.id] = new User(user);
+			users.push(new User(user));
 		},
 		
 		onuserlost: function(user) {
-			console.log(users);
-			console.log(user.id);
-			users[user.id].destruct();
+            for(u in users){
+            if(users[u].id==user.id)users[u].destruct();
+            }
 		}	
 	});
 }

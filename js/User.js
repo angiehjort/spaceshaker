@@ -1,4 +1,5 @@
 function User(kinectUser) {
+    this.id = kinectUser.id;
     this.kinectUser = kinectUser;
     this.kinectUser.addEventListener('userupdate', this.updateFromKinect.bind(this));
 

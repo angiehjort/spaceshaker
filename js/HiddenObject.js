@@ -16,18 +16,22 @@ function HiddenObject(color, size, position) {
 	this.audioFound = document.getElementById('audio_' + color);
 	this.audioFound.volume = 1;
 
-    this.newDiv = document.createElement('div');
-    this.newDiv.id = 'newDiv';
-    this.newDiv.classList.add('square');
-    this.newDiv.classList.add('newDiv');
-    this.newDiv.style.background = color;
-    touchArea.touchable.appendChild(this.newDiv);
-    //this.newDiv.appendTo(touchArea.touchable);
+    this.div = document.createElement('div');
+    this.div.id = 'rect_'+color;
+    this.div.classList.add('square');
+    this.div.classList.add('newDiv');
+    this.div.style.background = color;
+    touchArea.touchable.appendChild(this.div);
 
-    Hammer(this.newDiv).on('touch', this.checkDrop.bind(this));
+    Hammer(this.div).on('touch', this.checkDrop.bind(this));
 }
+HiddenObject.prototype.bake  = function()  {
+    this.div.classList.remove('newDiv');
+}
+
 HiddenObject.prototype.destruct = function() {
 	scene.remove(this.mesh);
+    touchArea.touchable.removeChild(this.div);
 	objects.splice(objects.indexOf(this),1);
 };
 HiddenObject.prototype.checkDrop = function() {
@@ -66,8 +70,9 @@ HiddenObject.generateObjects = function(c, b, s) {
 			// random(0-1) * range + offset
 			coords[j] = Math.random() * Math.abs(b[j].max - b[j].min) + b[j].min;
 		}
-		objects.push(new HiddenObject(color, {width: s.w, height: s.h, depth: s.d }, {x: coords.x, y: coords.y, z: coords.z}));
-		console.log(color + ' object generated: ', coords);
+        objects.push(new HiddenObject(color, {width: s.w, height: s.h, depth: s.d }, {x: coords.x, y: coords.y, z: coords.z}));
+		objects[objects.length-1].bake();
+        console.log(color + ' object generated: ', coords);
 	}
 };
 HiddenObject.createNew = function(color, s, p) {
@@ -77,16 +82,41 @@ HiddenObject.createNew = function(color, s, p) {
 
 HiddenObject.prototype.growY = function(h) {
     if(h!=null){
+
         delta = h-this.mesh.geometry.height;
         this.mesh.geometry.vertices[0].y += delta;
         this.mesh.geometry.vertices[1].y += delta;
         this.mesh.geometry.vertices[4].y += delta;
         this.mesh.geometry.vertices[5].y += delta;
         this.mesh.geometry.height=h;
-    }
     this.mesh.geometry.verticesNeedUpdate = true;
 
-    return 'object size updated';
+    return 'object height updated';
+    }else{
+    return 'null input parameters';
+    }
 };
 
+HiddenObject.prototype.growBase = function(W,D) {
+    if(W!=null&&D!=null){
+        console.log(ratioW);
+        ratioW = W/this.mesh.geometry.width;
+        ratioD = D/this.mesh.geometry.depth;
+        for(point in this.mesh.geometry.vertices){
+            point.x*=ratioW;
+            point.z*=ratioD;
+        }
+        this.mesh.geometry.width=W;
+        this.mesh.geometry.depth=D;
+
+        this.div.style.width = W + 'px';
+        this.div.style.height = D + 'px';
+
+    this.mesh.geometry.verticesNeedUpdate = true;
+
+    return 'object base updated';
+    }else{
+    return 'null input parameters';
+    }
+};
 
