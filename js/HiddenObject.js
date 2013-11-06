@@ -4,7 +4,8 @@ function HiddenObject(color, size, position) {
     if (size == null) size = {width: 100, height: 100, depth: 100};
     if (position == null) position = {x: 0, y: -400, z: 1200};
 
-	this.material = new THREE.MeshLambertMaterial( { color: color, transparent: true } );
+    this.color = color;
+	this.material = new THREE.MeshLambertMaterial( { color: this.color, transparent: true } );
 	this.material.opacity = 0.5;
 	this.mesh = new THREE.Mesh( new THREE.CubeGeometry(size.width, size.height, size.depth), this.material );
 	this.mesh.position = position;
@@ -12,7 +13,18 @@ function HiddenObject(color, size, position) {
 	scene.add(this.mesh);
     //scene.add(objects[objects.length - 1].mesh);
 
-	
+	this.growWFactor = 1.4;
+    this.growHFactor = 1.0;
+    this.growDFactor = 1.4;
+
+    this.growWminLimit = 100;
+    this.growHminLimit = 100;
+    this.growDminLimit = 100;
+
+    this.growWmaxLimit = 700;
+    this.growHmaxLimit = 700;
+    this.growDmaxLimit = 700;
+
 	this.audioFound = document.getElementById('audio_' + color);
 	this.audioFound.volume = 1;
 
@@ -35,8 +47,6 @@ HiddenObject.prototype.destruct = function() {
 	objects.splice(objects.indexOf(this),1);
 };
 HiddenObject.prototype.checkDrop = function() {
-
-
 	var soundYe=document.getElementById("soundYe");
 	var soundNo=document.getElementById("soundNo");
     soundYe.pause(); soundNo.pause();
@@ -44,17 +54,17 @@ HiddenObject.prototype.checkDrop = function() {
 		user = users[i];
 		if (user != null && user.carries != null) {
 			if (user.carries == this) {
-				soundYe.play();
+				if(!mute)soundYe.play();
 				this.destruct();
-				user.carries = null;
+				user.stopCarrying();
 			} else {
-				soundNo.play();
+				if(!mute)soundNo.play();
 			}
 		}
 	}	
 };
 HiddenObject.prototype.found = function() {
-	this.audioFound.play();
+	if(!mute)this.audioFound.play();
 };
 HiddenObject.prototype.collidesWith = function(mesh) {
 	return this.mesh.collidesWith(mesh);
@@ -80,43 +90,45 @@ HiddenObject.createNew = function(color, s, p) {
 	console.log(color + ' object generated: ', coords);
 };
 
-HiddenObject.prototype.growY = function(h) {
-    if(h!=null){
 
-        delta = h-this.mesh.geometry.height;
-        this.mesh.geometry.vertices[0].y += delta;
-        this.mesh.geometry.vertices[1].y += delta;
-        this.mesh.geometry.vertices[4].y += delta;
-        this.mesh.geometry.vertices[5].y += delta;
-        this.mesh.geometry.height=h;
-    this.mesh.geometry.verticesNeedUpdate = true;
+HiddenObject.prototype.grow = function (W, H, D) {
 
-    return 'object height updated';
-    }else{
-    return 'null input parameters';
+    if (W == null || W * this.growWFactor < this.growWminLimit || W * this.growWFactor > this.growWmaxLimit) {
+        ratioW = 1; W = this.mesh.geometry.width/this.growWFactor;
+    } else {
+        ratioW = W / this.mesh.geometry.width * this.growWFactor;
     }
-};
+    if (H == null || H * this.growHFactor < this.growHminLimit || H * this.growHFactor > this.growHmaxLimit) {
+        ratioH = 1; H = this.mesh.geometry.height/this.growHFactor;
+    } else {
+        ratioH = H / this.mesh.geometry.height * this.growHFactor;
+    }
+    if (D == null || D * this.growDFactor < this.growDminLimit || D * this.growDFactor > this.growDmaxLimit) {
+        ratioD = 1; D = this.mesh.geometry.depth/this.growDFactor;
+    } else {
+        ratioD = D / this.mesh.geometry.depth * this.growDFactor;
+    }
 
-HiddenObject.prototype.growBase = function(W,D) {
-    if(W!=null&&D!=null){
-        console.log(ratioW);
-        ratioW = W/this.mesh.geometry.width;
-        ratioD = D/this.mesh.geometry.depth;
-        for(point in this.mesh.geometry.vertices){
-            point.x*=ratioW;
-            point.z*=ratioD;
-        }
-        this.mesh.geometry.width=W;
-        this.mesh.geometry.depth=D;
 
-        this.div.style.width = W + 'px';
-        this.div.style.height = D + 'px';
+for (point in this.mesh.geometry.vertices){
+        this.mesh.geometry.vertices[point].x*=ratioW;
+        this.mesh.geometry.vertices[point].y*=ratioH;
+        this.mesh.geometry.vertices[point].z*=ratioD;
+    }
+    this.mesh.geometry.width*=ratioD;
+    this.mesh.geometry.height*=ratioH;
+    this.mesh.geometry.depth*=ratioD;
+
+    this.mesh.position.y += this.mesh.geometry.vertices[2].y*(1-ratioH)/ratioH;
+
+    this.div.style.width = W + 'px';
+    this.div.style.height = D + 'px';
+
+    this.div.style.border= H/20 + 'px inset grey';
 
     this.mesh.geometry.verticesNeedUpdate = true;
+
 
     return 'object base updated';
-    }else{
-    return 'null input parameters';
-    }
 };
 

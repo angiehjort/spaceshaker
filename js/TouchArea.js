@@ -7,6 +7,9 @@ function TouchArea(touchable) {
     this.newDiv = null;
     this.newObj = null;
 
+    this.timestamp=0;
+    this.timeResolution = 100; //ms
+
     // attach listeners
     Hammer(this.touchable).on('touch', this.iWannaTouch.bind(this));
     Hammer(this.touchable).on('release', this.iWannaRelease.bind(this));
@@ -19,7 +22,7 @@ TouchArea.prototype.iWannaTouch = function () {
         explanation.setText('You do not exist! Dont touch the table! >__<');
         return;
     } else {
-        this.who = users[users.length-1];
+        if(this.who==null)this.who = users[users.length-1];
     }
 
     if (event.gesture.touches.length == 2 && this.who.settingBaseOf==null && this.who.settingHeightOf==null) {
@@ -37,16 +40,20 @@ TouchArea.prototype.iWannaTouch = function () {
 }
 
 TouchArea.prototype.iWannaPinch = function () {
-    //console.log(this.who, this.who.settingBaseOf);
-    if (this.who!=null && this.who.settingBaseOf!=null) {
-        var scale = Math.round(event.gesture.scale * 100);
-        this.who.settingBaseOf.growBase(scale, scale);
+    if (this.timestamp < Date.now() - this.timeResolution) {
+        this.timestamp = Date.now();
+
+        if (this.who != null && this.who.settingBaseOf != null) {
+            var scale = Math.round(event.gesture.scale * 100);
+            this.who.settingBaseOf.grow(scale, null, scale);
+        }
     }
+
 }
 
 TouchArea.prototype.iWannaRelease = function () {
     if (this.who!=null &&  event.gesture.touches.length == 2 && this.who.settingBaseOf!=null) {
-        explanation.setText(this.explained?null:'Now swipe to cut off the box');
+        explanation.setText(this.explained?null:'Move one hand up to set the height. Then swipe to cut off the box');
 
         this.who.settingHeightOf = this.who.settingBaseOf;
         this.who.settingBaseOf = null;
@@ -55,7 +62,7 @@ TouchArea.prototype.iWannaRelease = function () {
 
 TouchArea.prototype.iWannaSwipe = function () {
     if (this.who!=null && this.who.settingHeightOf!=null){
-    explanation.setText(this.explained?null:"box created. Create more!");
+    explanation.setText(this.explained?null:"Box created. Create more!");
     this.explained = true;
 
     this.who.settingHeightOf.bake();

@@ -3,29 +3,39 @@ function User(kinectUser) {
     this.kinectUser = kinectUser;
     this.kinectUser.addEventListener('userupdate', this.updateFromKinect.bind(this));
 
+    this.timestamp=0;
+    this.timeResolution = 100; //ms
+
     this.settingBaseOf = null;
     this.settingHeightOf = null;
     this.carries = null;
-    material = new THREE.MeshLambertMaterial({
-        color: 0xff00ff
-    });
+
+    this.opacity = 0.3;
+
     this.skeleton = {
         Head: {
-            three: new THREE.Mesh(new THREE.SphereGeometry(200,6,6), material)
+            three: new THREE.Mesh(new THREE.SphereGeometry(150,16,16), new THREE.MeshLambertMaterial({
+                color: 0xff00ff, transparent: true, opacity: this.opacity
+            }))
         },
         Torso: {
-            three: new THREE.Mesh(new THREE.CubeGeometry(450, 600, 300), new THREE.MeshLambertMaterial({
-                color: 0xff00ff
+            three: new THREE.Mesh(new THREE.CubeGeometry(200, 600, 200), new THREE.MeshLambertMaterial({
+                color: 0xff00ff, transparent: true, opacity: this.opacity
             }))
         },
         RightHand: {
             three: new THREE.Mesh(new THREE.CubeGeometry(200, 200, 200), new THREE.MeshLambertMaterial({
-                color: 0xffff00
+                color: 0xffff00, transparent: true, opacity: this.opacity
             }))
         },
         LeftHand: {
             three: new THREE.Mesh(new THREE.CubeGeometry(200, 200, 200), new THREE.MeshLambertMaterial({
-                color: 0xffff00
+                color: 0xffff00, transparent: true, opacity: this.opacity
+            }))
+        },
+        Waist: {
+            three: new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), new THREE.MeshLambertMaterial({
+                color: 0xffff00, transparent: true, opacity: this.opacity
             }))
         }
     };
@@ -63,19 +73,20 @@ User.prototype.startCarrying = function (obj) {
     audio.stop();
     console.log('start carrying');
 };
+
 User.prototype.stopCarrying = function (obj) {
     this.carries = null;
     audio.start();
     console.log('stop carrying');
 };
-User.prototype.carry = function (obj) {
 
+
+User.prototype.carry = function (obj) {
     // start carrying if necessary
-    if (this.carries == null)
-        this.startCarrying(obj);
+    if (this.carries == null) this.startCarrying(obj);
 
     // audio feedback for carrying
-    document.getElementById('audio_ping').play();
+    if(!mute)document.getElementById('audio_ping').play();
 
     // update carried object position to average of hands
     obj.mesh.position = {
@@ -85,8 +96,12 @@ User.prototype.carry = function (obj) {
     };
 };
 
+
 /* UPDATE USER MODEL AND CARRIED OBJECTS */
 User.prototype.updateFromKinect = function (user) {
+
+    if (this.timestamp < Date.now() - this.timeResolution) {
+    this.timestamp = Date.now();
 
     // update coordinates
     for (joint in this.skeleton) {
@@ -105,6 +120,7 @@ User.prototype.updateFromKinect = function (user) {
     }
 
     // check hits with objects
+    if (this.settingHeightOf == null && this.settingBaseOf == null){
     for (i in objects) {
         obj = objects[i];
         if (obj.collidesWith(this.skeleton.LeftHand.three) && obj.collidesWith(this.skeleton.RightHand.three)) {
@@ -118,15 +134,14 @@ User.prototype.updateFromKinect = function (user) {
             }
         }
     }
-
+    }
 
     // update height of newly created element
     if (this.settingHeightOf != null) {
-     obj = this.settingHeightOf;
-     obj.growY(Math.abs(this.skeleton.LeftHand.three.position.y - this.skeleton.RightHand.three.position.y));
+        var delta = this.skeleton.LeftHand.three.position.y - this.skeleton.RightHand.three.position.y;
+        this.settingHeightOf.grow(null,Math.abs(delta),null);
     }
-
-
+    }
 };
 
 

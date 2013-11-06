@@ -23,7 +23,7 @@ ProximityAudio.prototype.stop = function() {
 	this.gainNode.disconnect();
 };
 ProximityAudio.prototype.start = function() {
-	this.gainNode.connect(this.context.destination);
+	if (!mute)this.gainNode.connect(this.context.destination);
 };
 ProximityAudio.prototype.isOn = function() {
 	return this.gainNode.numberOfOutputs > 0;
