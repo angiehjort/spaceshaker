@@ -83,7 +83,7 @@ HiddenObject.generateObjects = function(c, b, s) {
 			// random(0-1) * range + offset
 			coords[j] = Math.random() * Math.abs(b[j].max - b[j].min) + b[j].min;
 		}
-        objects.push(new HiddenObject(color, {width: s.w, height: s.h, depth: s.d }, {x: coords.x, y: coords.y, z: coords.z}));
+        objects.push(new HiddenObject(color, {width: s.w, height: s.h, depth: s.d }, {x: coords.x, y: coords.y, z: coords.z}, {x:100, y:100}));
 		objects[objects.length-1].bake();
         console.log(color + ' object generated: ', coords);
 	}
@@ -92,6 +92,12 @@ HiddenObject.createNew = function(color, s, p) {
     objects.push(new HiddenObject(color, {width: s.w, height: s.h, depth: s.d }, {x: p.x, y: p.y, z: p.z}));
 	console.log(color + ' object generated: ', coords);
 };
+
+
+HiddenObject.prototype.moveTwoDeeTo = function (X, Y) {
+    this.div.style.left = X + 'px';
+    this.div.style.top = Y + 'px';
+}
 
 
 HiddenObject.prototype.grow = function (W, H, D) {

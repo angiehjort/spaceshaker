@@ -35,10 +35,12 @@ TouchArea.prototype.iWannaTouch = function () {
             default:c = 'red'; // for cases 0 and 3
         }
 
-        console.log();
+        //console.log(event.gesture.center);
 
-        this.who.settingBaseOf = new HiddenObject(c, null, null,
-        {x:event.gesture.center.pageX, y:event.gesture.center.pageY} )
+        var posX = Math.min(event.gesture.touches[0].pageX,event.gesture.touches[1].pageX);
+        var posY = Math.min(event.gesture.touches[0].pageY,event.gesture.touches[1].pageY);
+
+        this.who.settingBaseOf = new HiddenObject(c, null, null,{x:posX, y:posY} )
         objects.push(this.who.settingBaseOf);
     }
 }
@@ -48,7 +50,12 @@ TouchArea.prototype.iWannaPinch = function () {
         this.timestamp = Date.now();
 
         if (this.who != null && this.who.settingBaseOf != null) {
+
             var scale = Math.round(event.gesture.scale * 100);
+            var posX = Math.min(event.gesture.touches[0].pageX,event.gesture.touches[1].pageX);
+            var posY = Math.min(event.gesture.touches[0].pageY,event.gesture.touches[1].pageY);
+
+            this.who.settingBaseOf.moveTwoDeeTo(posX, posY);
             this.who.settingBaseOf.grow(scale, null, scale);
         }
     }
