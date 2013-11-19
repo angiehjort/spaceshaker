@@ -58,12 +58,14 @@ TouchArea.prototype.iWannaPinch = function () {
 
         if (this.who != null && this.who.settingBaseOf != null) {
 
-            var scale = Math.round(event.gesture.scale * 100);
-            var posX = Math.min(event.gesture.touches[0].pageX, event.gesture.touches[1].pageX);
-            var posY = Math.min(event.gesture.touches[0].pageY, event.gesture.touches[1].pageY);
+            var x0 = event.gesture.touches[0].pageX;
+            var y0 = event.gesture.touches[0].pageY;
+            var x1 = event.gesture.touches[1].pageX;
+            var y1 = event.gesture.touches[1].pageY;
 
-            this.who.settingBaseOf.moveTwoDeeTo(posX, posY);
-            this.who.settingBaseOf.grow(scale, null, scale);
+            //var scale = Math.round(event.gesture.scale * 100);
+            this.who.settingBaseOf.updatePosition2d({x: Math.min(x0, x1), y: Math.min(y0, y1)});
+            this.who.settingBaseOf.grow(Math.abs(x0-x1), null, Math.abs(y0-y1));
         }
     }
 

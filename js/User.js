@@ -90,11 +90,12 @@ User.prototype.carry = function (obj) {
     if(!mute)document.getElementById('audio_ping').play();
 
     // update carried object position to average of hands
-    obj.mesh.position = {
+    var moveTo = {
         x: ((this.skeleton.LeftHand.three.position.x + this.skeleton.RightHand.three.position.x) / 2),
         y: ((this.skeleton.LeftHand.three.position.y + this.skeleton.RightHand.three.position.y) / 2),
         z: ((this.skeleton.LeftHand.three.position.z + this.skeleton.RightHand.three.position.z) / 2)
     };
+    obj.updatePosition3d(moveTo);
 };
 
 
@@ -113,7 +114,7 @@ User.prototype.updateFromKinect = function (user) {
 
     if (this.timestamp < Date.now() - this.timeResolution) {
 	    this.timestamp = Date.now();
-	
+
 	    // update coordinates
 	    for (joint in this.skeleton) {
 	        if (user.skeleton[zig.Joint[joint]]) {
@@ -122,14 +123,14 @@ User.prototype.updateFromKinect = function (user) {
 	            this.skeleton[joint].three.position.z = user.skeleton[zig.Joint[joint]].position[2];
 	        }
 	    }
-	
+
 	    // update audio distance feedback
 	    if (this.carries == null) {
 	        closestDist = this.distanceToClosestObject();
 	        //audio.updateFreq(250 * Math.pow(Math.exp(-closestDist/150), (1/5)));
 	        audio.updateGain(Math.pow(Math.exp(-closestDist / 150), (1 / 5)));
 	    }
-	
+
 	    // check hits with objects
 	    if (this.settingHeightOf == null && this.settingBaseOf == null) {
 		    for (i in objects) {
@@ -146,7 +147,7 @@ User.prototype.updateFromKinect = function (user) {
 		        }
 		    }
 	    }
-	
+
 	    // update height of newly created element
 	    if (this.settingHeightOf != null) {
 	        var delta = this.skeleton.LeftHand.three.position.y - this.skeleton.RightHand.three.position.y;

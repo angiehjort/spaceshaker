@@ -11,7 +11,9 @@ function Calibration() {
 Calibration.prototype.changeCurrent = function() {
 	var el = this.elements[this.currentEl];
 	el.style.display = 'block';
-	el.addEventListener('touchstart', this.handleTouchStart.bind(this));
+
+    Hammer(el).on('touch', this.handleTouchStart.bind(this));
+	//el.addEventListener('touchstart', this.handleTouchStart.bind(this));
 }
 
 Calibration.prototype.handleTouchStart = function(event) {
@@ -25,14 +27,15 @@ Calibration.prototype.handleTouchStart = function(event) {
 	// remove calibration point
 	var el = event.target;
 	el.style.display = 'none';
-	el.removeEventListener('touchstart', this.handleTouchStart);
+	//el.removeEventListener('touchstart', this.handleTouchStart);
+    Hammer(el).on('touch', function(){});
 	
 	// get coordinates
 	kinect = users[0].getPosition('LeftHand');
 	this.points[this.currentEl] = {
 		table: { 
-			x: event.touches[0].clientX,
-			y: event.touches[0].clientY
+			x: event.gesture.touches[0].pageX,
+			y: event.gesture.touches[0].pageY
 		},
 		kinect: {
 			x: kinect.x,

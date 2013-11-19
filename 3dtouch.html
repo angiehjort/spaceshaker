@@ -16,7 +16,7 @@
     <script src='js/TouchArea.js'></script>
     <script src='js/Explanation.js'></script>
     <script src='js/Calibration.js'></script>
-    
+
     <script type="text/javascript">
         var scene;
         var audio;
@@ -30,17 +30,17 @@
         function initCalibration() {
             initZig();
             initMain();
-            
+
 			calibration = new Calibration();
 
         }
-        
+
         function initMain() {
             // make sure you add <div id='radar'></div> to your html body
             initThree();
 
             Hammer.plugins.showTouches();
-            //Hammer.plugins.fakeMultitouch();
+            Hammer.plugins.fakeMultitouch();
 
             mute = false;
 
@@ -134,7 +134,7 @@
         	padding: 0;
             background-image:url('http://2.bp.blogspot.com/-NwW8Qm05qW0/UOQjigl7EcI/AAAAAAAAD7c/4RG9Jn8FxcE/s1600/textured_paper_background-vanilla_yellow.jpg');
             background-repeat:repeat;
-            
+
             overflow: hidden;
         }
         #three {
@@ -172,11 +172,10 @@
         	float: left;
         	width: 100px;
         	height: 100px;
-        	margin: 10px 5px;
             opacity: 0.4;
             border: 5px inset grey;
             border-radius: 4px;
-            position:relative;
+            position:absolute;
         }
 
         .newDiv {
@@ -195,7 +194,7 @@
         	height: 80px;
         	background: black;
         	border-radius: 100%;
-        	
+
         	position: absolute;
         	z-index: 5;
         	display: none;
@@ -224,7 +223,7 @@
 		<div id="calOne" class="calSpot"></div>
 		<div id="calTwo" class="calSpot"></div>
 	</div>
-	
+
 	<div id="main">
 
 	    <audio id="audio_red" src="audio/red.wav" preload="auto"></audio>
@@ -233,16 +232,16 @@
 	    <audio id="audio_ping" src="audio/ping.wav" preload="auto"></audio>
 	    <audio id="soundYe" src="audio/horse.mp3" preload="auto"></audio>
 	    <audio id="soundNo" src="audio/buzz.mp3" preload="auto"></audio>
-	
+
 	    <div id="three"></div>
 	    <div id="touch">
 	        <div id="explanation">
 	            Hi! Stand here, so that Kinect can find you
 	        </div>
-	
-	
+
+
 	    </div>
-	
+
 	</div>
 
 </body>

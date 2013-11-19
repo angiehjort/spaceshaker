@@ -94,26 +94,31 @@ HiddenObject.createNew = function(color, s, p) {
 };
 
 
-HiddenObject.prototype.moveTwoDeeTo = function (X, Y) {
-    this.div.style.left = X + 'px';
-    this.div.style.top = Y + 'px';
+HiddenObject.prototype.updatePosition3d = function (position) {
+    obj.mesh.position = position;
+}
+HiddenObject.prototype.updatePosition2d = function (position) {
+    this.div.style.left = position.x + 'px';
+    this.div.style.top = position.y + 'px';
+
+    console.log(this.div.style.left, this.div.style.top);
 }
 
 
 HiddenObject.prototype.grow = function (W, H, D) {
 
     if (W == null || W * this.growWFactor < this.growWminLimit || W * this.growWFactor > this.growWmaxLimit) {
-        ratioW = 1; W = this.mesh.geometry.width/this.growWFactor;
+        ratioW = 1; //W = this.mesh.geometry.width/this.growWFactor;
     } else {
         ratioW = W / this.mesh.geometry.width * this.growWFactor;
     }
     if (H == null || H * this.growHFactor < this.growHminLimit || H * this.growHFactor > this.growHmaxLimit) {
-        ratioH = 1; H = this.mesh.geometry.height/this.growHFactor;
+        ratioH = 1; //H = this.mesh.geometry.height/this.growHFactor;
     } else {
         ratioH = H / this.mesh.geometry.height * this.growHFactor;
     }
     if (D == null || D * this.growDFactor < this.growDminLimit || D * this.growDFactor > this.growDmaxLimit) {
-        ratioD = 1; D = this.mesh.geometry.depth/this.growDFactor;
+        ratioD = 1; //D = this.mesh.geometry.depth/this.growDFactor;
     } else {
         ratioD = D / this.mesh.geometry.depth * this.growDFactor;
     }
