@@ -99,11 +99,12 @@ User.prototype.carry = function (obj) {
 
 
 User.prototype.getPosition = function (joint) {
-	if (typeof this.skeleton[joint] === 'undefined')
-		return this.skeleton[joint].three.position;
-	else {
+	if (typeof this.skeleton[joint] === 'undefined') {
 		console.log('User does not have joint ' + joint);
 		return {};
+	} 
+	else {
+		return this.skeleton[joint].three.position;
 	}
 }
 
@@ -151,6 +152,15 @@ User.prototype.updateFromKinect = function (user) {
 	        var delta = this.skeleton.LeftHand.three.position.y - this.skeleton.RightHand.three.position.y;
 	        this.settingHeightOf.grow(null,Math.abs(delta),null);
 	    }
+    }
+    
+    
+    // TEST FOR CALIBRATION 
+    var caltest = document.getElementById('calTest');
+    if (caltest !== null) {
+	    caltest.style.top = ((this.skeleton['LeftHand'].three.position.z - calibration.offset.z) * calibration.ratio.z) + 'px';
+	    caltest.style.left = ((this.skeleton['LeftHand'].three.position.x - calibration.offset.x) * calibration.ratio.x) + 'px';
+	    console.log(caltest.style.top, caltest.style.left);
     }
 };
 

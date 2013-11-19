@@ -20,6 +20,7 @@
     <script type="text/javascript">
         var scene;
         var audio;
+        var calibration;
 
         var users = new Array();
         var objects = new Array();
@@ -28,11 +29,9 @@
 
         function initCalibration() {
             initZig();
-
             initMain();
             
-			//new Calibration();
-            
+			calibration = new Calibration();
         }
         
         function initMain() {
@@ -78,7 +77,7 @@
             zig.explained = false;
             zig.addListener({
                 onuserfound: function(user) {
-                    if (!zig.explained) explanation.setText("Pinch-zoom here to create new squares. Hold shift to emulate on desktop");
+                    //if (!zig.explained) explanation.setText("Pinch-zoom here to create new squares. Hold shift to emulate on desktop");
                     users.push(new User(user));
                 },
 
@@ -205,7 +204,13 @@
         	bottom: 30px;
         	right: 30px;
         }
-        /*#main { display: none; } */
+        #calTest {
+        	width: 50px;
+        	height: 50px;
+        	background: black;
+        	opacity: 0.7;
+        	position: absolute;
+        }
     </style>
 </head>
 

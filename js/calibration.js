@@ -3,10 +3,12 @@ function Calibration() {
 	this.points = [];
 	this.elements = document.getElementById('calibration').getElementsByClassName('calSpot');
 	this.currentEl = 0;
-	this.calibrateCurrent();
+	this.changeCurrent();
+	this.ratio = {};
+	this.offset = {};
 }
 
-Calibration.prototype.calibrateCurrent = function() {
+Calibration.prototype.changeCurrent = function() {
 	var el = this.elements[this.currentEl];
 	el.style.display = 'block';
 	el.addEventListener('touchstart', this.handleTouchStart.bind(this));
@@ -14,29 +16,57 @@ Calibration.prototype.calibrateCurrent = function() {
 
 Calibration.prototype.handleTouchStart = function(event) {
 	
+	// error handling
 	if(typeof users[0] === 'undefined'){
 		console.log('No kinect user found, reposition');
 		return;
 	}
-		
+	
+	// remove calibration point
 	var el = event.target;
 	el.style.display = 'none';
 	el.removeEventListener('touchstart', this.handleTouchStart);
 	
+	// get coordinates
+	kinect = users[0].getPosition('LeftHand');
 	this.points[this.currentEl] = {
 		table: { 
 			x: event.touches[0].clientX,
 			y: event.touches[0].clientY
 		},
-		kinect: users[0].getPosition('rightHand')
+		kinect: {
+			x: kinect.x,
+			y: kinect.y,
+			z: kinect.z
+		}
 	}
 	
-	console.log(this.points);
-	
+	// next point or end?
 	if (++this.currentEl < this.elements.length)
-		this.calibrateCurrent();
-	else
-		initMain();
+		this.changeCurrent();
+	else 
+		this.calibrate();
+}
 
+// calibration-points have been found: now calibrate
+Calibration.prototype.calibrate = function() {
+	// kinectX = tableX
+	// kinectZ = tableY
+	
+	dxTable = Math.abs(this.points[0].table.x - this.points[1].table.x);
+	dyTable = Math.abs(this.points[0].table.y - this.points[1].table.y);
+
+	dxKinect = Math.abs(this.points[0].kinect.x - this.points[1].kinect.x);
+	dzKinect = Math.abs(this.points[0].kinect.z - this.points[1].kinect.z);
+	
+	this.ratio.x = dxTable/dxKinect;
+	this.ratio.z = dyTable/dzKinect;
+
+	this.offset.x = this.points[0].kinect.x - (this.ratio.x / this.points[0].table.x);
+	this.offset.z = this.points[0].kinect.z - (this.ratio.z / this.points[0].table.y);
+	console.log(this);
+	testdiv = document.createElement('div');
+	testdiv.id = 'calTest';
+	document.getElementById('calibration').appendChild(testdiv);
 }
 
