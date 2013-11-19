@@ -3,7 +3,7 @@ function HiddenObject(color, size, position, position_twodee) {
     if (color == null) color = 'pink';
     if (size == null) size = {width: 100, height: 100, depth: 100};
     if (position == null) position = {x: 0, y: -400, z: 1200};
-    if (position_twodee == null) position = {x: 100, y: 100};
+    if (position_twodee == null) position_twodee = {x: 100, y: 100};
 
     this.color = color;
 	this.material = new THREE.MeshLambertMaterial( { color: this.color, transparent: true } );

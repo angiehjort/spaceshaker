@@ -15,7 +15,8 @@
     <script src='js/ProximityAudio.js'></script>
     <script src='js/TouchArea.js'></script>
     <script src='js/Explanation.js'></script>
-
+    <script src='js/Calibration.js'></script>
+    
     <script type="text/javascript">
         var scene;
         var audio;
@@ -25,9 +26,17 @@
 
         var boundaries;
 
-        function init() {
-            // make sure you add <div id='radar'></div> to your html body
+        function initCalibration() {
             initZig();
+
+            initMain();
+            
+			//new Calibration();
+            
+        }
+        
+        function initMain() {
+            // make sure you add <div id='radar'></div> to your html body
             initThree();
 
             Hammer.plugins.showTouches();
@@ -68,7 +77,6 @@
         function initZig() {
             zig.explained = false;
             zig.addListener({
-
                 onuserfound: function(user) {
                     if (!zig.explained) explanation.setText("Pinch-zoom here to create new squares. Hold shift to emulate on desktop");
                     users.push(new User(user));
@@ -118,7 +126,7 @@
         }
 
 
-        document.addEventListener('DOMContentLoaded', init, false);
+        document.addEventListener('DOMContentLoaded', initCalibration, false);
     </script>
     <style>
         body {
@@ -166,10 +174,6 @@
             opacity: 0.4;
             border: 5px inset grey;
             border-radius: 4px;
-            position: absolute;
-            left: 100px;
-            top: 100px
-
         }
 
         .newDiv {
@@ -183,26 +187,54 @@
         canvas {
         	-webkit-transform: scaleY(-1);
         }
+        #calibration .calSpot {
+        	width: 80px;
+        	height: 80px;
+        	background: black;
+        	border-radius: 100%;
+        	
+        	position: absolute;
+        	z-index: 5;
+        	display: none;
+        }
+        #calibration #calOne {
+        	top: 0px;
+        	left: 0px;
+        }
+        #calibration #calTwo {
+        	bottom: 30px;
+        	right: 30px;
+        }
+        /*#main { display: none; } */
     </style>
 </head>
 
 <body>
-    <audio id="audio_red" src="audio/red.wav" preload="auto"></audio>
-    <audio id="audio_green" src="audio/green.wav" preload="auto"></audio>
-    <audio id="audio_blue" src="audio/blue.wav" preload="auto"></audio>
-    <audio id="audio_ping" src="audio/ping.wav" preload="auto"></audio>
-    <audio id="soundYe" src="audio/horse.mp3" preload="auto"></audio>
-    <audio id="soundNo" src="audio/buzz.mp3" preload="auto"></audio>
 
-    <div id="three"></div>
-    <div id="touch">
-        <div id="explanation">
-            Hi! Stand here, so that Kinect can find you
-        </div>
+	<div id="calibration">
+		<div id="calOne" class="calSpot"></div>
+		<div id="calTwo" class="calSpot"></div>
+	</div>
+	
+	<div id="main">
 
-
-    </div>
-
+	    <audio id="audio_red" src="audio/red.wav" preload="auto"></audio>
+	    <audio id="audio_green" src="audio/green.wav" preload="auto"></audio>
+	    <audio id="audio_blue" src="audio/blue.wav" preload="auto"></audio>
+	    <audio id="audio_ping" src="audio/ping.wav" preload="auto"></audio>
+	    <audio id="soundYe" src="audio/horse.mp3" preload="auto"></audio>
+	    <audio id="soundNo" src="audio/buzz.mp3" preload="auto"></audio>
+	
+	    <div id="three"></div>
+	    <div id="touch">
+	        <div id="explanation">
+	            Hi! Stand here, so that Kinect can find you
+	        </div>
+	
+	
+	    </div>
+	
+	</div>
 
 </body>
 
