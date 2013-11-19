@@ -28,13 +28,17 @@ TouchArea.prototype.iWannaTouch = function () {
     if (event.gesture.touches.length == 2 && this.who.settingBaseOf==null && this.who.settingHeightOf==null) {
         explanation.setText(this.explained?null:'Yeees, like this you make a box base')
 
+
         switch (Math.round(Math.random() * 3)) {
             case 1:var c = 'green';break;
             case 2:var c = 'blue';break;
             default:c = 'red'; // for cases 0 and 3
         }
 
-        this.who.settingBaseOf = new HiddenObject(c, null, null)
+        console.log();
+
+        this.who.settingBaseOf = new HiddenObject(c, null, null,
+        {x:event.gesture.center.pageX, y:event.gesture.center.pageY} )
         objects.push(this.who.settingBaseOf);
     }
 }
