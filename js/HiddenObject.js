@@ -1,8 +1,9 @@
-function HiddenObject(color, size, position) {
+function HiddenObject(color, size, position, position_twodee) {
     //defaults
     if (color == null) color = 'pink';
     if (size == null) size = {width: 100, height: 100, depth: 100};
     if (position == null) position = {x: 0, y: -400, z: 1200};
+    if (position_twodee == null) position = {x: 100, y: 100};
 
     this.color = color;
 	this.material = new THREE.MeshLambertMaterial( { color: this.color, transparent: true } );
@@ -33,6 +34,8 @@ function HiddenObject(color, size, position) {
     this.div.classList.add('square');
     this.div.classList.add('newDiv');
     this.div.style.background = color;
+    this.div.style.left = position_twodee.x + 'px';
+    this.div.style.top = position_twodee.y + 'px';
     touchArea.touchable.appendChild(this.div);
 
     Hammer(this.div).on('touch', this.checkDrop.bind(this));
