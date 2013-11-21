@@ -14,9 +14,9 @@ function HiddenObject(color, size, position, position_twodee) {
 	scene.add(this.mesh);
     //scene.add(objects[objects.length - 1].mesh);
 
-	this.growWFactor = 1.4;
+	this.growWFactor = 1.0;
     this.growHFactor = 1.0;
-    this.growDFactor = 1.4;
+    this.growDFactor = 1.0;
 
     this.growWminLimit = 100;
     this.growHminLimit = 100;
@@ -95,13 +95,13 @@ HiddenObject.createNew = function(color, s, p) {
 
 
 HiddenObject.prototype.updatePosition3d = function (position) {
-    obj.mesh.position = position;
+    this.mesh.position = position;
 }
 HiddenObject.prototype.updatePosition2d = function (position) {
     this.div.style.left = position.x + 'px';
     this.div.style.top = position.y + 'px';
 
-    console.log(this.div.style.left, this.div.style.top);
+    //console.log(this.div.style.left, this.div.style.top);
 }
 
 
@@ -123,13 +123,12 @@ HiddenObject.prototype.grow = function (W, H, D) {
         ratioD = D / this.mesh.geometry.depth * this.growDFactor;
     }
 
-
 for (point in this.mesh.geometry.vertices){
         this.mesh.geometry.vertices[point].x*=ratioW;
         this.mesh.geometry.vertices[point].y*=ratioH;
         this.mesh.geometry.vertices[point].z*=ratioD;
     }
-    this.mesh.geometry.width*=ratioD;
+    this.mesh.geometry.width*=ratioW;
     this.mesh.geometry.height*=ratioH;
     this.mesh.geometry.depth*=ratioD;
 

@@ -63,6 +63,13 @@ TouchArea.prototype.iWannaPinch = function () {
             var x1 = event.gesture.touches[1].pageX;
             var y1 = event.gesture.touches[1].pageY;
 
+            var moveTo = {
+            x: ((this.who.skeleton.LeftHand.three.position.x + this.who.skeleton.RightHand.three.position.x) / 2),
+            y: ((this.who.skeleton.LeftHand.three.position.y + this.who.skeleton.RightHand.three.position.y) / 2),
+            z: ((this.who.skeleton.LeftHand.three.position.z + this.who.skeleton.RightHand.three.position.z) / 2)
+            };
+            this.who.settingBaseOf.updatePosition3d(moveTo);
+
             //var scale = Math.round(event.gesture.scale * 100);
             this.who.settingBaseOf.updatePosition2d({x: Math.min(x0, x1), y: Math.min(y0, y1)});
             this.who.settingBaseOf.grow(Math.abs(x0-x1), null, Math.abs(y0-y1));

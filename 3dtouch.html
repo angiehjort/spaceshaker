@@ -38,6 +38,7 @@
         function initMain() {
             // make sure you add <div id='radar'></div> to your html body
             initThree();
+            document.oncontextmenu = function() { return false; };
 
             Hammer.plugins.showTouches();
             Hammer.plugins.fakeMultitouch();
@@ -129,12 +130,12 @@
         document.addEventListener('DOMContentLoaded', initCalibration, false);
     </script>
     <style>
+        * { overflow:hidden; }
         body {
         	margin: 0;
         	padding: 0;
             background-image:url('http://2.bp.blogspot.com/-NwW8Qm05qW0/UOQjigl7EcI/AAAAAAAAD7c/4RG9Jn8FxcE/s1600/textured_paper_background-vanilla_yellow.jpg');
             background-repeat:repeat;
-
             overflow: hidden;
         }
         #three {
@@ -151,9 +152,11 @@
         }
 
         #touch {
-            position:absolute;
-        	display: block;
-        	float: left;
+            overflow: hidden;
+            position:fixed;
+            top:0px;
+            left:0px;
+
             width: 100%;
         	height: 100%;
         }
@@ -162,7 +165,7 @@
             text-align:center;
             width:inherit;
             bottom: 20px;
-            font-size: 150%;
+            font-size: 100%;
             font-family:sans-serif;
             position: absolute;
             background:#fff9b6;
@@ -201,9 +204,11 @@ text-align:center;
             font-size: 100%;
             line-height:80px;
             text-align:
-        	position: absolute;
-        	z-index: 5;
+        	position: fixed;
+        	z-index: 1000;
         	display: none;
+            left:0;
+            top:0;
         }
         #calibration #calOne {
         	top: 0px;
@@ -225,10 +230,7 @@ text-align:center;
 
 <body>
 
-	<div id="calibration">
-		<div id="calOne" class="calSpot">Touch me</div>
-		<div id="calTwo" class="calSpot">Touch me</div>
-	</div>
+
 
 	<div id="main">
 
@@ -245,6 +247,10 @@ text-align:center;
 	            Hi! Stand here, so that Kinect can find you
 	        </div>
 
+            	<div id="calibration">
+		<div id="calOne" class="calSpot">Touch me</div>
+		<div id="calTwo" class="calSpot">Touch me</div>
+	</div>
 
 	    </div>
 
