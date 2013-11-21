@@ -32,12 +32,12 @@ function User(kinectUser) {
             three: new THREE.Mesh(new THREE.CubeGeometry(200, 200, 200), new THREE.MeshLambertMaterial({
                 color: 0xffff00, transparent: true, opacity: this.opacity
             }))
-        },
-        Waist: {
-            three: new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), new THREE.MeshLambertMaterial({
-                color: 0xffff00, transparent: true, opacity: this.opacity
-            }))
         }
+//        Waist: {
+//            three: new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), new THREE.MeshLambertMaterial({
+//                color: 0xffff00, transparent: true, opacity: this.opacity
+//            }))
+//        }
     };
     //this.skeleton.Head.three.geometry
 

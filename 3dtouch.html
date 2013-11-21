@@ -162,6 +162,7 @@
             text-align:center;
             width:inherit;
             bottom: 20px;
+            font-size: 150%;
             font-family:sans-serif;
             position: absolute;
             background:#fff9b6;
@@ -192,9 +193,14 @@
         #calibration .calSpot {
         	width: 80px;
         	height: 80px;
-        	background: black;
+        	background: yellow;
+            opacity: 0.7;
         	border-radius: 100%;
-
+            font-family:sans-serif;
+text-align:center;
+            font-size: 100%;
+            line-height:80px;
+            text-align:
         	position: absolute;
         	z-index: 5;
         	display: none;
@@ -210,7 +216,7 @@
         #calTest {
         	width: 50px;
         	height: 50px;
-        	background: black;
+        	background: yellow;
         	opacity: 0.7;
         	position: absolute;
         }
@@ -220,8 +226,8 @@
 <body>
 
 	<div id="calibration">
-		<div id="calOne" class="calSpot"></div>
-		<div id="calTwo" class="calSpot"></div>
+		<div id="calOne" class="calSpot">Touch me</div>
+		<div id="calTwo" class="calSpot">Touch me</div>
 	</div>
 
 	<div id="main">
