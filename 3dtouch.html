@@ -200,15 +200,12 @@
             opacity: 0.7;
         	border-radius: 100%;
             font-family:sans-serif;
-text-align:center;
+			text-align:center;
             font-size: 100%;
             line-height:80px;
-            text-align:
-        	position: fixed;
+            position: absolute;
         	z-index: 1000;
         	display: none;
-            left:0;
-            top:0;
         }
         #calibration #calOne {
         	top: 0px;
@@ -230,7 +227,10 @@ text-align:center;
 
 <body>
 
-
+    <div id="calibration">
+		<div id="calOne" class="calSpot">Touch me</div>
+		<div id="calTwo" class="calSpot">Touch me</div>
+	</div>
 
 	<div id="main">
 
@@ -247,10 +247,6 @@ text-align:center;
 	            Hi! Stand here, so that Kinect can find you
 	        </div>
 
-            	<div id="calibration">
-		<div id="calOne" class="calSpot">Touch me</div>
-		<div id="calTwo" class="calSpot">Touch me</div>
-	</div>
 
 	    </div>
 

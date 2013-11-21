@@ -141,7 +141,6 @@ for (point in this.mesh.geometry.vertices){
 
     this.mesh.geometry.verticesNeedUpdate = true;
 
-
     return 'object base updated';
 };
 

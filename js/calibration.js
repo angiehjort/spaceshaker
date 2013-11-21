@@ -3,17 +3,19 @@ function Calibration() {
 	this.points = [];
 	this.elements = document.getElementById('calibration').getElementsByClassName('calSpot');
 	this.currentEl = 0;
-	this.changeCurrent();
 	this.ratio = {};
 	this.offset = {};
+	
+
+	this.changeCurrent();
 }
 
 Calibration.prototype.changeCurrent = function() {
 	var el = this.elements[this.currentEl];
 	el.style.display = 'block';
 
-    Hammer(el).on('touch', this.handleTouchStart.bind(this));
-	//el.addEventListener('touchstart', this.handleTouchStart.bind(this));
+    //Hammer(el).on('touch', this.handleTouchStart.bind(this));
+	el.addEventListener('touchstart', this.handleTouchStart.bind(this));
 }
 
 Calibration.prototype.handleTouchStart = function(event) {
@@ -72,4 +74,20 @@ Calibration.prototype.calibrate = function() {
 	testdiv.id = 'calTest';
 	document.getElementById('calibration').appendChild(testdiv);
 }
+
+
+Calibration.prototype.getTableX = function(kinectX) {
+	return (kinectX - calibration.offset.x) * calibration.ratio.x;
+}
+Calibration.prototype.getTableY = function(kinectZ) {
+	return (kinectZ - calibration.offset.z) * calibration.ratio.z;
+}
+Calibration.prototype.getKinectX = function(tableX) {
+	return (tableX / calibration.ratio.x) + calibration.offset.x;
+}
+Calibration.prototype.getKinectZ = function(tableY) {
+	return (tableY / calibration.ratio.z) + calibration.offset.z;
+}
+
+
 

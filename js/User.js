@@ -112,17 +112,17 @@ User.prototype.getPosition = function (joint) {
 /* UPDATE USER MODEL AND CARRIED OBJECTS */
 User.prototype.updateFromKinect = function (user) {
 
-    if (this.timestamp < Date.now() - this.timeResolution) {
-	    this.timestamp = Date.now();
-
+	lpassOld = 0.5;
+	
 	    // update coordinates
 	    for (joint in this.skeleton) {
 	        if (user.skeleton[zig.Joint[joint]]) {
-	            this.skeleton[joint].three.position.x = user.skeleton[zig.Joint[joint]].position[0];
-	            this.skeleton[joint].three.position.y = user.skeleton[zig.Joint[joint]].position[1];
-	            this.skeleton[joint].three.position.z = user.skeleton[zig.Joint[joint]].position[2];
+	            this.skeleton[joint].three.position.x = ((1-lpassOld) * user.skeleton[zig.Joint[joint]].position[0] + lpassOld * this.skeleton[joint].three.position.x);
+	            this.skeleton[joint].three.position.y = ((1-lpassOld) * user.skeleton[zig.Joint[joint]].position[1] + lpassOld * this.skeleton[joint].three.position.y);
+	            this.skeleton[joint].three.position.z = ((1-lpassOld) * user.skeleton[zig.Joint[joint]].position[2] + lpassOld * this.skeleton[joint].three.position.z);
 	        }
 	    }
+
 
 	    // update audio distance feedback
 	    if (this.carries == null) {
@@ -153,14 +153,13 @@ User.prototype.updateFromKinect = function (user) {
 	        var delta = this.skeleton.LeftHand.three.position.y - this.skeleton.RightHand.three.position.y;
 	        this.settingHeightOf.grow(null,Math.abs(delta),null);
 	    }
-    }
     
     
     // TEST FOR CALIBRATION 
     var caltest = document.getElementById('calTest');
     if (caltest !== null) {
-	    caltest.style.top = ((this.skeleton['LeftHand'].three.position.z - calibration.offset.z) * calibration.ratio.z) + 'px';
-	    caltest.style.left = ((this.skeleton['LeftHand'].three.position.x - calibration.offset.x) * calibration.ratio.x) + 'px';
+	    caltest.style.top = (calibration.getTableY(this.skeleton['LeftHand'].three.position.Z) + 'px';
+	    caltest.style.left = (calibration.getTableX(this.skeleton['LeftHand'].three.position.X) + 'px';
 	    console.log(caltest.style.top, caltest.style.left);
     }
 };
