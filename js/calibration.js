@@ -2,10 +2,10 @@
 function Calibration() {
 	this.points = [];
 	this.elements = document.getElementById('calibration').getElementsByClassName('calSpot');
+
 	this.currentEl = 0;
 	this.ratio = {};
 	this.offset = {};
-	
 
 	this.changeCurrent();
 }
@@ -14,23 +14,24 @@ Calibration.prototype.changeCurrent = function() {
 	var el = this.elements[this.currentEl];
 	el.style.display = 'block';
 
-    //Hammer(el).on('touch', this.handleTouchStart.bind(this));
-	el.addEventListener('touchstart', this.handleTouchStart.bind(this));
+    Hammer(el).on('tap', this.handleTouchStart.bind(this));
+	//el.addEventListener('touchstart', this.handleTouchStart.bind(this));
 }
 
 Calibration.prototype.handleTouchStart = function(event) {
 	
+    console.log(event);
 	// error handling
 	if(typeof users[0] === 'undefined'){
 		console.log('No kinect user found, reposition');
 		return;
 	}
-	
+
 	// remove calibration point
 	var el = event.target;
 	el.style.display = 'none';
 	//el.removeEventListener('touchstart', this.handleTouchStart);
-    Hammer(el).on('touch', function(){});
+    Hammer(el).off('tap', this.handleTouchStart);
 	
 	// get coordinates
 	kinect = users[0].getPosition('LeftHand');
@@ -72,7 +73,10 @@ Calibration.prototype.calibrate = function() {
 	console.log(this);
 	testdiv = document.createElement('div');
 	testdiv.id = 'calTest';
-	document.getElementById('calibration').appendChild(testdiv);
+	//document.getElementById('calibration').appendChild(testdiv);
+
+    audio.start();
+    document.getElementById('main').style.visibility = 'visible';
 }
 
 

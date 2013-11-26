@@ -14,6 +14,7 @@ function ProximityAudio() {
 }
 ProximityAudio.prototype.updateFreq = function(freq) {
 	this.oscillator.frequency.value = freq;
+	console.log(freq);
 };
 ProximityAudio.prototype.updateGain = function(gain) {
 	this.gainNode.gain.value = gain;

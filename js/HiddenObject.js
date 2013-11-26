@@ -106,7 +106,8 @@ HiddenObject.prototype.updatePosition2d = function (position) {
 
 
 HiddenObject.prototype.grow = function (W, H, D) {
-
+    this.growWFactor = calibration.ratio.x;
+    this.growDFactor = calibration.ratio.z;
     if (W == null || W * this.growWFactor < this.growWminLimit || W * this.growWFactor > this.growWmaxLimit) {
         ratioW = 1; //W = this.mesh.geometry.width/this.growWFactor;
     } else {
