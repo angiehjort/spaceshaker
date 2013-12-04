@@ -141,7 +141,7 @@ User.prototype.updateFromKinect = function (user) {
 
             case "PWM":
 	            if (closestDist<2000){
-                vibro.updateInterval(500, (1-closestDist/2000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
+	            	vibro.updateInterval(500, (1-closestDist/2000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
 	            }
 	            break;
 

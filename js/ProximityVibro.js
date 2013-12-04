@@ -1,8 +1,8 @@
 function ProximityVibro() {
-    this.outer = 1000; //ms
-    this.inner = 100; //ms
-    this.geiger1;
-    this.geiger2;
+    this.outer = 1000; // ms
+    this.inner = 100; // ms
+    this.periodInterval;
+    this.pulseLength;
 
     this.carryOn = false;
     this.playedOnce = false;
@@ -19,13 +19,18 @@ function ProximityVibro() {
 	this.gainNode.gain.value = 1;
 	this.oscillator.connect(this.gainNode);
 
-    this.intervalsStart();
+    this.intervalStart();
 };
 
 ProximityVibro.prototype.updateInterval = function(period, portion){
-    var self = this;
-    this.outer = period;
     this.inner = period * portion;
+    if (this.outer != period && this.playedOnce) {
+    	this.intervalStop();
+        this.outer = period;
+    	this.intervalStart();
+    	
+    	this.playedOnce = false;
+    }
 };
 
 ProximityVibro.prototype.updateFreq = function(freq) {
@@ -37,25 +42,24 @@ ProximityVibro.prototype.updateGain = function(gain) {
     console.log(gain);
 };
 
-ProximityVibro.prototype.intervalsStart = function(){
+ProximityVibro.prototype.intervalStart = function(){
     var self = this;
 
-    self.geiger1 = setInterval(function () {
+    self.periodInterval = setInterval(function () {
         self.audioStart();
 
-    	self.geiger2 = setTimeout(function() {
+    	self.pulseLength = setTimeout(function() {
             self.audioStop();
-            //self.playedOnce = true;
+            self.playedOnce = true;
             console.log(self.outer, self.inner);
     	}, self.inner);
     }, self.outer);
 
 };
 
-ProximityVibro.prototype.intervalsStop = function(){
+ProximityVibro.prototype.intervalStop = function(){
     //this.playedOnce = false;
-    clearInterval(this.geiger1);
-    clearTimeout(this.geiger2);
+    clearInterval(this.periodInterval);
 };
 
 ProximityVibro.prototype.audioStart = function(){
@@ -67,16 +71,16 @@ ProximityVibro.prototype.audioStop = function() {
 };
 
 ProximityVibro.prototype.refresh = function() {
-    this.intervalsStop();
+    this.intervalStop();
     this.updateGain(1);
     this.updateFreq(400);
 
     if ((proximityStyle=="PWM" || proximityStyle=="Geiger")&& !this.carryOn){
         this.audioStop();
-        this.intervalsStart();
+        this.intervalStart();
     }
     if (proximityStyle=="Freq" || proximityStyle=="Gain" || this.carryOn){
-        this.intervalsStop();
+        this.intervalStop();
         this.audioStart();
     }
 };
