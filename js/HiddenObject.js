@@ -57,17 +57,19 @@ HiddenObject.prototype.checkDrop = function() {
 		user = users[i];
 		if (user != null && user.carries != null) {
 			if (user.carries == this) {
-				if(!mute)soundYe.play();
+				//if(!mute)soundYe.play();
 				this.destruct();
 				user.stopCarrying();
 			} else {
-				if(!mute)soundNo.play();
+				//if(!mute)soundNo.play();
 			}
 		}
-	}	
+	}
 };
 HiddenObject.prototype.found = function() {
-	if(!mute)this.audioFound.play();
+	//if(!mute)this.audioFound.play();
+    //geiger.setPeriod(1000,1);
+
 };
 HiddenObject.prototype.collidesWith = function(mesh) {
 	return this.mesh.collidesWith(mesh);

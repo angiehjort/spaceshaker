@@ -71,13 +71,16 @@ User.prototype.startCarrying = function (obj) {
     // user carries object
     this.carries = obj;
     // stop proximity audio
-    audio.stop();
+    geiger.carryOn = true;
+    geiger.setPeriod(500);
+    //audio.stop();
     console.log('start carrying');
 };
 
 User.prototype.stopCarrying = function (obj) {
     this.carries = null;
-    audio.start();
+    geiger.carryOn = false;
+    //audio.start();
     console.log('stop carrying');
 };
 
@@ -87,7 +90,7 @@ User.prototype.carry = function (obj) {
     if (this.carries == null) this.startCarrying(obj);
 
     // audio feedback for carrying
-    if(!mute)document.getElementById('audio_ping').play();
+    //if(!mute)document.getElementById('audio_ping').play();
 
     // update carried object position to average of hands
     var moveTo = {
@@ -128,10 +131,11 @@ User.prototype.updateFromKinect = function (user) {
 	    if (this.carries == null) {
 	        closestDist = this.distanceToClosestObject();
 	        //audio.updateFreq(250* Math.pow(Math.exp(-closestDist/100), (1/5)));
-            //audio.updateGain(Math.pow(Math.exp(-closestDist/150), (1/5)));
+            audio.updateGain(Math.pow(Math.exp(-closestDist/20), (1/10)));
             //geiger.setPeriod(closestDist,0.5);
             if (closestDist<1000){
-            geiger.setPeriod(1000, 1-closestDist/1000);
+            geiger.setPeriod(500, (1-closestDist/1000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
+
             }
 	    }
 
