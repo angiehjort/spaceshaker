@@ -1,9 +1,9 @@
 <html>
-
 <head>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <!--script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script-->
 
     <script src='js/lib/zig.js'></script>
+    <script src='js/lib/jquery-2.0.3.js'></script>
     <script src='js/lib/three.js'></script>
     <script src="js/lib/hammer.js"></script>
     <script src="js/lib/hammer.fakemultitouch.js"></script>
@@ -18,6 +18,13 @@
     <script src='js/Calibration.js'></script>
 
     <script type="text/javascript">
+//We will need to experiment with different types of output and see what works better:
+//hapting proximity between hands and objects to motor frequency or volume or pulse rate
+//hapting collisions with objects or not
+//hapting the process of carrying objects or not
+//experimenting with mono or stereo haptic output (since we also want to keep sound output)
+
+
         var scene;
         var audio;
         var calibration;
@@ -35,11 +42,16 @@
         }
 
         function initMain() {
-            // make sure you add <div id='radar'></div> to your html body
             document.oncontextmenu = function() { return false; };
+
+
+            document.getElementById('main').style.visibility = 'visible';
+
 
             initZig();
             initThree();
+
+
 
             Hammer.plugins.showTouches();
             Hammer.plugins.fakeMultitouch();
@@ -48,6 +60,8 @@
             touchArea = new TouchArea(document.getElementById('touch'));
             explanation = new Explanation(document.getElementById('explanation'));
             audio = new ProximityAudio();
+            audio.start();
+            geiger = new GeigerCounter(document.getElementById('audio_ping'));
 
             audio.stop();
 
@@ -129,14 +143,15 @@
         }
 
 
-        document.addEventListener('DOMContentLoaded', initCalibration, false);
+       //document.addEventListener('DOMContentLoaded', initCalibration, false);
+         document.addEventListener('DOMContentLoaded', initMain, false);
     </script>
     <style>
         * { overflow:hidden; }
         body {
         	margin: 0;
         	padding: 0;
-            background-image:url('http://2.bp.blogspot.com/-NwW8Qm05qW0/UOQjigl7EcI/AAAAAAAAD7c/4RG9Jn8FxcE/s1600/textured_paper_background-vanilla_yellow.jpg');
+            background-image:url('texture.jpg');
             background-repeat:repeat;
             overflow: hidden;
         }

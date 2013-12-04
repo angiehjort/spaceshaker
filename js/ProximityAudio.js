@@ -7,11 +7,11 @@ function ProximityAudio() {
 	this.oscillator.noteOn && this.oscillator.noteOn(0); // this method doesn't seem to exist, though it's in the docs?
 
 	this.gainNode = this.context.createGainNode();
-	this.gainNode.gain.value = 0.05;
+	this.gainNode.gain.value = 1; //0.05
 	
 	this.oscillator.connect(this.gainNode);
 	this.start();
-}
+};
 ProximityAudio.prototype.updateFreq = function(freq) {
 	this.oscillator.frequency.value = freq;
 	console.log(freq);
@@ -28,4 +28,55 @@ ProximityAudio.prototype.start = function() {
 };
 ProximityAudio.prototype.isOn = function() {
 	return this.gainNode.numberOfOutputs > 0;
+};
+
+
+function GeigerCounter(audioSourse) {
+    this.audioSourse = audioSourse;
+    console.log(this.audioSourse);
+    this.outer = 1000; //ms
+    this.inner = 100; //ms
+    this.geiger = 0;
+    this.start();
+    this.playedOnce = false;
+    this.playing = false;
+
+
+//    this.context = new webkitAudioContext();
+//    this.oscillator = this.context.createOscillator();
+//	this.oscillator.type = 'sine';
+//	this.oscillator.frequency.value = 250;
+//    this.gainNode.gain.value = 1;
+};
+
+GeigerCounter.prototype.setPeriod = function(period, portion){
+    if (this.playedOnce){
+        this.stop();
+        this.outer = period;
+        this.inner = period*portion;
+        this.start();
+    }
+};
+
+GeigerCounter.prototype.start = function(){
+    var self = this;
+
+    this.geiger = setInterval(function() {
+            audio.start();
+
+        this.inner = setTimeout(function(){
+            audio.stop();
+            self.playedOnce = true;
+
+            console.log(self.outer, self.inner);
+        }, self.inner);
+
+    }, self.outer);
+
+
+};
+
+GeigerCounter.prototype.stop = function(){
+    this.playedOnce = false;
+    clearInterval(this.geiger);
 };
