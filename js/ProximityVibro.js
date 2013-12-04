@@ -7,56 +7,53 @@ function ProximityVibro() {
     this.carryOn = false;
     this.playedOnce = false;
     this.playing = false;
-
     this.restart = false;
 
-    this.start();
-    this.context = new webkitAudioContext();
-    this.oscillator = this.context.createOscillator();
+
+	this.context = new webkitAudioContext();
+	this.oscillator = this.context.createOscillator();
 	this.oscillator.type = 'sine';
-	this.oscillator.frequency.value = 250;
-    this.gainNode.gain.value = 1;
+	this.oscillator.frequency.value = 400;
+	this.oscillator.noteOn && this.oscillator.noteOn(0); // this method doesn't seem to exist, though it's in the docs?
+	this.gainNode = this.context.createGainNode();
+	this.gainNode.gain.value = 1;
+	this.oscillator.connect(this.gainNode);
+
+    this.intervalsStart();
 };
 
-ProximityVibro.prototype.setPeriod = function(period, portion){
+ProximityVibro.prototype.updateInterval = function(period, portion){
     var self = this;
-    if (this.playedOnce){
-        //this.stop();
-        this.outer = period;
-        if(this.carryOn == true) {
-        	this.inner = period;
-        	this.gainNode.gain.value = 1;
-        } else {
-            this.inner = period*portion;
-        }
-        //this.start();
-    }
+    this.outer = period;
+    this.inner = period * portion;
 };
 
-ProximityVibro.prototype.start = function(){
+ProximityVibro.prototype.updateFreq = function(freq) {
+	this.oscillator.frequency.value = freq;
+};
+ProximityVibro.prototype.updateGain = function(gain) {
+	this.gainNode.gain.value = gain;
+};
+
+ProximityVibro.prototype.intervalsStart = function(){
     var self = this;
 
+    self.geiger1 = setInterval(function () {
+        self.audioStart();
 
-    this.geiger1 = setInterval(function () {
-    	setTimeout(function() {
-            audio.stop();
-            self.playedOnce = true;
+    	self.geiger2 = setTimeout(function() {
+            self.audioStop();
+            //self.playedOnce = true;
+            console.log(self.outer, self.inner);
     	}, self.inner);
-
-        audio.start();
-
-        //olddate = self.date;
-        //self.date = Date.now();
-
-        //console.log(self.outer, self.inner, 'bleep: ' + (self.date - olddate));
-    }, this.outer);
-
+    }, self.outer);
 
 };
 
-ProximityVibro.prototype.stop = function(){
-    this.playedOnce = false;
+ProximityVibro.prototype.intervalsStop = function(){
+    //this.playedOnce = false;
     clearInterval(this.geiger1);
+    clearTimeout(this.geiger2);
 };
 
 ProximityVibro.prototype.audioStart = function(){
@@ -65,4 +62,29 @@ ProximityVibro.prototype.audioStart = function(){
 
 ProximityVibro.prototype.audioStop = function() {
 	this.gainNode.disconnect();
+};
+
+
+ProximityVibro.prototype.constStart = function(){
+    this.intervalsStop();
+    this.audioStart();
+};
+
+ProximityVibro.prototype.constStop = function() {
+	this.audioStop();
+    this.intervalsStart();
+};
+
+ProximityVibro.prototype.refresh = function() {
+    this.intervalsStop();
+    this.constStop();
+    this.updateGain(1);
+    this.updateFreq(400);
+
+    if (proximityStyle=="PWM" || proximityStyle=="Geiger"){
+        this.intervalsStart();
+    }
+    if (proximityStyle=="Freq" || proximityStyle=="Gain"){
+        this.constStart();
+    }
 };

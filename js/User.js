@@ -66,16 +66,15 @@ User.prototype.startCarrying = function (obj) {
     // user carries object
     this.carries = obj;
     // stop proximity audio
-    geiger.carryOn = true;
-    geiger.setPeriod(500);
     //audio.stop();
+    vibro.constStart();
     console.log('start carrying');
 };
 
 User.prototype.stopCarrying = function (obj) {
     this.carries = null;
-    geiger.carryOn = false;
     //audio.start();
+    vibro.constStop();
     console.log('stop carrying');
 };
 
@@ -86,7 +85,6 @@ User.prototype.carry = function (obj) {
 
     // audio feedback for carrying
     //if(!mute)document.getElementById('audio_ping').play();
-    geiger.setPeriod(500);
 
     // update carried object position to average of hands
     var moveTo = {
@@ -127,23 +125,25 @@ User.prototype.updateFromKinect = function (user) {
     if (this.carries == null) {
         closestDist = this.distanceToClosestObject();
 
+        //audio.updateFreq(4000 * Math.pow(Math.exp(-closestDist/150), (1/5)));
+
         switch (proximityStyle){
             case "Freq":
-            	audio.updateFreq(250* Math.pow(Math.exp(-closestDist/100), (1/5)));
+            	vibro.updateFreq(250* Math.pow(Math.exp(-closestDist/100), (1/5)));
             	break;
 
             case "Geiger":
-            	geiger.setPeriod(closestDist,0.5);
+            	vibro.updateInterval(closestDist,0.5);
             	break;
 
             case "PWM":
-	            if (closestDist<1000){
-                geiger.setPeriod(500, (1-closestDist/1000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
+	            if (closestDist<2000){
+                vibro.updateInterval(500, (1-closestDist/2000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
 	            }
 	            break;
 
             case "Gain":
-                audio.updateGain(Math.pow(Math.exp(-closestDist/20), (1/10)));
+                vibro.updateGain(Math.pow(Math.exp(-closestDist/20), (1/10)));
                 break;
         }
 

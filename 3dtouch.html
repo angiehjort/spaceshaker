@@ -13,6 +13,7 @@
     <script src='js/User.js'></script>
     <script src='js/HiddenObject.js'></script>
     <script src='js/ProximityAudio.js'></script>
+    <script src='js/ProximityVibro.js'></script>
     <script src='js/TouchArea.js'></script>
     <script src='js/Explanation.js'></script>
     <script src='js/Calibration.js'></script>
@@ -57,9 +58,8 @@
             settings = new Settings(document.getElementById('settings'));
             explanation = new Explanation(document.getElementById('explanation'));
             audio = new ProximityAudio();
-            audio.start();
-
             vibro = new ProximityVibro();
+            audio.start();
 
             HiddenObject.generateObjects(
                 ['red'], //, 'green', 'blue'],
@@ -266,8 +266,8 @@ canvas {
 }
 
 #settings {
-	width: 200px;
-	height: 400px;
+	width: 100px;
+	height: 300px;
 	top: 20px;
 	left: 20px;
 	position: absolute;

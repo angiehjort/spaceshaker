@@ -31,6 +31,8 @@ Settings.prototype.iWannaRelease = function () {
 
     proximityStyle = event.target.textContent;
     console.log("set proximity style to " + proximityStyle);
+
+    vibro.refresh();
 }
 
 
