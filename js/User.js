@@ -91,6 +91,7 @@ User.prototype.carry = function (obj) {
 
     // audio feedback for carrying
     //if(!mute)document.getElementById('audio_ping').play();
+    geiger.setPeriod(500);
 
     // update carried object position to average of hands
     var moveTo = {

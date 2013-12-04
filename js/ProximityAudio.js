@@ -18,7 +18,7 @@ ProximityAudio.prototype.updateFreq = function(freq) {
 };
 ProximityAudio.prototype.updateGain = function(gain) {
 	this.gainNode.gain.value = gain;
-	//console.log(gain);
+	console.log(gain);
 };
 ProximityAudio.prototype.stop = function() {
 	this.gainNode.disconnect();
@@ -56,11 +56,11 @@ GeigerCounter.prototype.setPeriod = function(period, portion){
     if (this.playedOnce){
         this.stop();
         this.outer = period;
-        this.inner = period*portion;
-       if(this.carryOn) {
-           this.inner=period;
+       if(this.carryOn == true) {
+           this.inner = period;
            audio.updateGain(1);
        }
+        else this.inner = period*portion;
     }
 };
 
@@ -69,12 +69,12 @@ GeigerCounter.prototype.start = function(){
     //console.log(Date.now()-this.sr)/1000);
     this.sr = Date.now();
 
-    //audio.start();
-    audio.updateFreq(250);
+    audio.start();
+    //audio.updateFreq(250);
 
     this.geiger1 = setTimeout(function () {
-        //audio.stop();
-        audio.updateFreq(1);
+        audio.stop();
+        //audio.updateFreq(1);
         self.playedOnce = true;
     }, self.inner);
 
