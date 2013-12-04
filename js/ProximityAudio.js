@@ -7,7 +7,7 @@ function ProximityAudio() {
 	this.oscillator.noteOn && this.oscillator.noteOn(0); // this method doesn't seem to exist, though it's in the docs?
 
 	this.gainNode = this.context.createGainNode();
-	this.gainNode.gain.value = 1; //0.05
+	this.gainNode.gain.value = 0.05;
 
 	this.oscillator.connect(this.gainNode);
 	this.start();
@@ -30,64 +30,3 @@ ProximityAudio.prototype.isOn = function() {
 	return this.gainNode.numberOfOutputs > 0;
 };
 
-
-function GeigerCounter() {
-    this.outer = 1000; //ms
-    this.inner = 100; //ms
-    this.geiger1;
-    this.geiger2;
-    
-    this.carryOn = false;
-    this.playedOnce = false;
-    this.playing = false;
-    
-    this.restart = false;
-
-    this.start();
-//    this.context = new webkitAudioContext();
-//    this.oscillator = this.context.createOscillator();
-//	this.oscillator.type = 'sine';
-//	this.oscillator.frequency.value = 250;
-//    this.gainNode.gain.value = 1;
-};
-
-GeigerCounter.prototype.setPeriod = function(period, portion){
-    var self = this;
-    if (this.playedOnce){
-        //this.stop();
-        this.outer = period;
-        if(this.carryOn == true) {
-        	this.inner = period;
-        	audio.updateGain(1);
-        } else {
-            this.inner = period*portion;
-        }
-        //this.start();
-    }
-};
-
-GeigerCounter.prototype.start = function(){
-    var self = this;
-
-    
-    this.geiger1 = setInterval(function () {
-    	setTimeout(function() {
-            audio.stop();
-            self.playedOnce = true;
-    	}, self.inner);
-    	
-        audio.start();
-
-        //olddate = self.date;
-        //self.date = Date.now();
-        
-        //console.log(self.outer, self.inner, 'bleep: ' + (self.date - olddate));
-    }, this.outer);
-
-
-};
-
-GeigerCounter.prototype.stop = function(){
-    this.playedOnce = false;
-    clearInterval(this.geiger1);
-};

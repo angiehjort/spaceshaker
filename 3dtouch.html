@@ -45,28 +45,21 @@
 
         function initMain() {
             document.oncontextmenu = function() { return false; };
-
-
             document.getElementById('main').style.visibility = 'visible';
-
 
             initZig();
             initThree();
 
-
-
             Hammer.plugins.showTouches();
             Hammer.plugins.fakeMultitouch();
-
 
             touchArea = new TouchArea(document.getElementById('touch'));
             settings = new Settings(document.getElementById('settings'));
             explanation = new Explanation(document.getElementById('explanation'));
             audio = new ProximityAudio();
-           // audio.start();
-            geiger = new GeigerCounter();
+            audio.start();
 
-            //audio.stop();
+            vibro = new ProximityVibro();
 
             HiddenObject.generateObjects(
                 ['red'], //, 'green', 'blue'],

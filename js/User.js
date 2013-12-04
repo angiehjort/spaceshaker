@@ -33,11 +33,6 @@ function User(kinectUser) {
                 color: 0xffff00, transparent: true, opacity: this.opacity
             }))
         }
-//        Waist: {
-//            three: new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), new THREE.MeshLambertMaterial({
-//                color: 0xffff00, transparent: true, opacity: this.opacity
-//            }))
-//        }
     };
     //this.skeleton.Head.three.geometry
 
@@ -132,8 +127,6 @@ User.prototype.updateFromKinect = function (user) {
     if (this.carries == null) {
         closestDist = this.distanceToClosestObject();
 
-
-
         switch (proximityStyle){
             case "Freq":
             	audio.updateFreq(250* Math.pow(Math.exp(-closestDist/100), (1/5)));
@@ -145,8 +138,7 @@ User.prototype.updateFromKinect = function (user) {
 
             case "PWM":
 	            if (closestDist<1000){
-
-	            	geiger.setPeriod(500, (1-closestDist/1000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
+                geiger.setPeriod(500, (1-closestDist/1000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
 	            }
 	            break;
 
