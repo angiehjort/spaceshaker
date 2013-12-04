@@ -127,17 +127,32 @@ User.prototype.updateFromKinect = function (user) {
 	    }
 
 
-	    // update audio distance feedback
-	    if (this.carries == null) {
-	        closestDist = this.distanceToClosestObject();
-	        //audio.updateFreq(250* Math.pow(Math.exp(-closestDist/100), (1/5)));
-            audio.updateGain(Math.pow(Math.exp(-closestDist/20), (1/10)));
-            //geiger.setPeriod(closestDist,0.5);
+    // update audio distance feedback
+    if (this.carries == null) {
+        closestDist = this.distanceToClosestObject();
 
+        audio.updateGain(Math.pow(Math.exp(-closestDist/20), (1/10)));
 
+        switch (proximityStyle){
+            case "Freq":
+            audio.updateFreq(250* Math.pow(Math.exp(-closestDist/100), (1/5)));
+            break;
+
+            case "Geiger":
+            geiger.setPeriod(closestDist,0.5);
+            break;
+
+            case "PWM":
             if (closestDist<1000){
             geiger.setPeriod(500, (1-closestDist/1000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
             }
+            break;
+        }
+
+
+
+
+
 
 	    }
 
