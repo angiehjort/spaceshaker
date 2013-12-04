@@ -16,6 +16,7 @@
     <script src='js/TouchArea.js'></script>
     <script src='js/Explanation.js'></script>
     <script src='js/Calibration.js'></script>
+    <script src='js/Settings.js'></script>
 
     <script type="text/javascript">
 //We will need to experiment with different types of output and see what works better:
@@ -24,6 +25,7 @@
 //hapting the process of carrying objects or not
 //experimenting with mono or stereo haptic output (since we also want to keep sound output)
 
+    	var proximityStyle = 'PWC';
 
         var scene;
         var audio;
@@ -58,6 +60,7 @@
 
 
             touchArea = new TouchArea(document.getElementById('touch'));
+            settings = new Settings(document.getElementById('settings'));
             explanation = new Explanation(document.getElementById('explanation'));
             audio = new ProximityAudio();
            // audio.start();
@@ -147,103 +150,139 @@
          document.addEventListener('DOMContentLoaded', initMain, false);
     </script>
     <style>
-        * { overflow:hidden; }
-        body {
-        	margin: 0;
-        	padding: 0;
-            background-image:url('texture.jpg');
-            background-repeat:repeat;
-            overflow: hidden;
-        }
-        #three {
-            position: fixed;
-            left: 50%;
-            margin-left: -15%;
-            margin-top: 50px;
-        	width: 30%;
-        	height: 50%;
-            background:#fffbc9;
-            border: 1px solid grey;
-            opacity: 0.8;
-            border-radius: 4px;
-        }
+* {
+	overflow: hidden;
+}
 
-        #touch {
-            overflow: hidden;
-            position:fixed;
-            top:0px;
-            left:0px;
+body {
+	margin: 0;
+	padding: 0;
+	background-image: url('texture.jpg');
+	background-repeat: repeat;
+	overflow: hidden;
+}
 
-            width: 100%;
-        	height: 100%;
-        }
+#three {
+	position: fixed;
+	left: 50%;
+	margin-left: -15%;
+	margin-top: 50px;
+	width: 30%;
+	height: 50%;
+	background: #fffbc9;
+	border: 1px solid grey;
+	opacity: 0.8;
+	border-radius: 4px;
+}
 
-        #explanation{
-            text-align:center;
-            width:inherit;
-            bottom: 20px;
-            font-size: 100%;
-            font-family:sans-serif;
-            position: absolute;
-            background:#fff9b6;
-            opacity: 0.8;
-        }
+#touch {
+	overflow: hidden;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+}
 
-        .square {
-        	float: left;
-        	width: 100px;
-        	height: 100px;
-            opacity: 0.4;
-            border: 5px inset grey;
-            border-radius: 4px;
-            position:absolute;
-        }
+#explanation {
+	text-align: center;
+	width: inherit;
+	bottom: 20px;
+	font-size: 100%;
+	font-family: sans-serif;
+	position: absolute;
+	background: #fff9b6;
+	opacity: 0.8;
+}
 
-        .newDiv {
-            border-radius: 20px;
-        }
+.square {
+	float: left;
+	width: 100px;
+	height: 100px;
+	opacity: 0.4;
+	border: 5px inset grey;
+	border-radius: 4px;
+	position: absolute;
+}
 
+.newDiv {
+	border-radius: 20px;
+}
 
-        audio {
-        	display:  none;
-        }
-        canvas {
-        	-webkit-transform: scaleY(-1);
-        }
-        #calibration .calSpot {
-        	width: 80px;
-        	height: 80px;
-        	background: yellow;
-            opacity: 0.7;
-        	border-radius: 100%;
-            font-family:sans-serif;
+audio {
+	display: none;
+}
 
-			text-align:center;
-            font-size: 100%;
-            line-height:80px;
-            position: absolute;
+canvas {
+	-webkit-transform: scaleY(-1);
+}
 
-        	z-index: 1000;
-        	display: none;
-        }
-        #calibration #calOne {
-        	top: 0px;
-        	left: 0px;
-        }
-        #calibration #calTwo {
-        	bottom: 30px;
-        	right: 30px;
-        }
-        #calTest {
-        	width: 50px;
-        	height: 50px;
-        	background: yellow;
-        	opacity: 0.7;
-        	position: absolute;
-        }
+#calibration .calSpot {
+	width: 80px;
+	height: 80px;
+	background: yellow;
+	opacity: 0.7;
+	border-radius: 100%;
+	font-family: sans-serif;
+	text-align: center;
+	font-size: 100%;
+	line-height: 80px;
+	position: absolute;
+	z-index: 1000;
+	display: none;
+}
 
-        #main { visibility: hidden; }
-    </style>
+#calibration #calOne {
+	top: 0px;
+	left: 0px;
+}
+
+#calibration #calTwo {
+	bottom: 30px;
+	right: 30px;
+}
+
+#calTest {
+	width: 50px;
+	height: 50px;
+	background: yellow;
+	opacity: 0.7;
+	position: absolute;
+}
+
+#main {
+	visibility: hidden;
+}
+
+/* SETTINGS */
+#settings .btn {
+	width: 60px;
+	height: 40px;
+	margin: 10px;
+	text-align: center;
+	font-size: 100%;
+	font-family: sans-serif;
+	background: #ff8000;
+	border-radius: 5;
+	opacity: 0.8;
+	border: 3px inset #d4880d;
+}
+
+#settings .down {
+	background: #e87603;
+}
+
+#settings {
+	width: 200px;
+	height: 400px;
+	top: 20px;
+	left: 20px;
+	position: absolute;
+	background: #fff9b6;
+	opacity: 0.8;
+	position: absolute;
+}
+</style>
 </head>
 
 <body>
@@ -269,6 +308,7 @@
 	        </div>
 
 	    </div>
+	    <div id="settings"></div>
 
 	</div>
 

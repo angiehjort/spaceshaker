@@ -9,17 +9,17 @@ function Settings(container) {
 
 
     for (i = 0; i < btnNames.length; ++i) {
-    var name = btnNames[i];
-    var button = new Object();
-        button.div = document.createElement('div');
-        button.div.id = 'button'+name;
-        button.div.classList.add('btn');
-        button.div.textContent = name;
-    self.container.appendChild(button.div);
-    self.buttons.push(button);
-
-    Hammer(button.div).on('touch', self.iWannaTouch.bind(self));
-    Hammer(button.div).on('release', self.iWannaRelease.bind(self));
+	    var name = btnNames[i];
+	    var button = document.createElement('div');
+	        button = document.createElement('div');
+	        button.id = 'button'+name;
+	        button.classList.add('btn');
+	        button.textContent = name;
+	    self.container.appendChild(button);
+	    self.buttons.push(button);
+	
+	    Hammer(button).on('touch', self.iWannaTouch.bind(self));
+	    Hammer(button).on('release', self.iWannaRelease.bind(self));
     };
 
 };
