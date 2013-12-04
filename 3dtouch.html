@@ -63,10 +63,10 @@ var proximityStyle = "PWM";
             audio = new ProximityAudio();
             audio.start();
             geiger = new GeigerCounter(document.getElementById('audio_ping'));
-
             settings = new Settings(document.getElementById('settings'));
 
             audio.stop();
+
 
             HiddenObject.generateObjects(
                 ['red'], //, 'green', 'blue'],
