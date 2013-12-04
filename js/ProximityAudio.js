@@ -66,12 +66,11 @@ GeigerCounter.prototype.setPeriod = function(period, portion){
 
 GeigerCounter.prototype.start = function(){
     var self = this;
-    //console.log(Date.now()-this.sr)/1000);
-    this.sr = Date.now();
 
     audio.start();
     //audio.updateFreq(250);
 
+    clearInterval(this.geiger1);
     this.geiger1 = setTimeout(function () {
         audio.stop();
         //audio.updateFreq(1);
