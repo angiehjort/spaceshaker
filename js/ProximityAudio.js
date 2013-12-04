@@ -18,7 +18,7 @@ ProximityAudio.prototype.updateFreq = function(freq) {
 };
 ProximityAudio.prototype.updateGain = function(gain) {
 	this.gainNode.gain.value = gain;
-	console.log(gain);
+	//console.log(gain);
 };
 ProximityAudio.prototype.stop = function() {
 	this.gainNode.disconnect();
@@ -54,43 +54,34 @@ function GeigerCounter() {
 GeigerCounter.prototype.setPeriod = function(period, portion){
     var self = this;
     if (this.playedOnce){
-        this.stop();
+        //this.stop();
         this.outer = period;
         if(this.carryOn == true) {
         	this.inner = period;
         	audio.updateGain(1);
+        } else {
+            this.inner = period*portion;
         }
-        else this.inner = period*portion;
+        //this.start();
     }
 };
 
 GeigerCounter.prototype.start = function(){
     var self = this;
 
-    audio.start();
-    //audio.updateFreq(250);
     
-    
-    //clearInterval(this.geiger1);
-    //this.geiger1 = setTimeout(function () {
-    //    audio.stop();
-        //audio.updateFreq(1);
-    //    self.playedOnce = true;
-    //}, this.inner);
-   /* setInterval(function () {
-    	self.inner += (Math.random()*50);
-    }, 1100)
-   */ 
-    
-    setInterval(function () {
+    this.geiger1 = setInterval(function () {
     	setTimeout(function() {
-    		console.log('blap');
+            audio.stop();
+            self.playedOnce = true;
     	}, self.inner);
     	
-        olddate = self.date;
-        self.date = Date.now();
+        audio.start();
+
+        //olddate = self.date;
+        //self.date = Date.now();
         
-        console.log('bleep: ' + (self.date - olddate));
+        //console.log(self.outer, self.inner, 'bleep: ' + (self.date - olddate));
     }, this.outer);
 
 
@@ -98,5 +89,5 @@ GeigerCounter.prototype.start = function(){
 
 GeigerCounter.prototype.stop = function(){
     this.playedOnce = false;
-    //clearInterval(this.geiger);
+    clearInterval(this.geiger1);
 };
