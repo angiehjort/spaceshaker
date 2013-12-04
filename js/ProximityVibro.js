@@ -30,9 +30,11 @@ ProximityVibro.prototype.updateInterval = function(period, portion){
 
 ProximityVibro.prototype.updateFreq = function(freq) {
 	this.oscillator.frequency.value = freq;
+    console.log(freq);
 };
 ProximityVibro.prototype.updateGain = function(gain) {
 	this.gainNode.gain.value = gain;
+    console.log(gain);
 };
 
 ProximityVibro.prototype.intervalsStart = function(){
@@ -64,27 +66,17 @@ ProximityVibro.prototype.audioStop = function() {
 	this.gainNode.disconnect();
 };
 
-
-ProximityVibro.prototype.constStart = function(){
-    this.intervalsStop();
-    this.audioStart();
-};
-
-ProximityVibro.prototype.constStop = function() {
-	this.audioStop();
-    this.intervalsStart();
-};
-
 ProximityVibro.prototype.refresh = function() {
     this.intervalsStop();
-    this.constStop();
     this.updateGain(1);
     this.updateFreq(400);
 
-    if (proximityStyle=="PWM" || proximityStyle=="Geiger"){
+    if ((proximityStyle=="PWM" || proximityStyle=="Geiger")&& !this.carryOn){
+        this.audioStop();
         this.intervalsStart();
     }
-    if (proximityStyle=="Freq" || proximityStyle=="Gain"){
-        this.constStart();
+    if (proximityStyle=="Freq" || proximityStyle=="Gain" || this.carryOn){
+        this.intervalsStop();
+        this.audioStart();
     }
 };

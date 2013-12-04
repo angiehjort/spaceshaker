@@ -67,14 +67,16 @@ User.prototype.startCarrying = function (obj) {
     this.carries = obj;
     // stop proximity audio
     //audio.stop();
-    vibro.constStart();
+    vibro.carryOn = true;
+    vibro.refresh();
     console.log('start carrying');
 };
 
 User.prototype.stopCarrying = function (obj) {
     this.carries = null;
     //audio.start();
-    vibro.constStop();
+    vibro.carryOn = false;
+    vibro.refresh();
     console.log('stop carrying');
 };
 
@@ -126,6 +128,7 @@ User.prototype.updateFromKinect = function (user) {
         closestDist = this.distanceToClosestObject();
 
         //audio.updateFreq(4000 * Math.pow(Math.exp(-closestDist/150), (1/5)));
+
 
         switch (proximityStyle){
             case "Freq":
