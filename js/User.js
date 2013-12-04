@@ -103,7 +103,7 @@ User.prototype.getPosition = function (joint) {
 	if (typeof this.skeleton[joint] === 'undefined') {
 		console.log('User does not have joint ' + joint);
 		return {};
-	} 
+	}
 	else {
 		return this.skeleton[joint].three.position;
 	}
@@ -113,7 +113,7 @@ User.prototype.getPosition = function (joint) {
 User.prototype.updateFromKinect = function (user) {
 
 	lpassOld = 0.5;
-	
+
 	    // update coordinates
 	    for (joint in this.skeleton) {
 	        if (user.skeleton[zig.Joint[joint]]) {
@@ -127,8 +127,10 @@ User.prototype.updateFromKinect = function (user) {
 	    // update audio distance feedback
 	    if (this.carries == null) {
 	        closestDist = this.distanceToClosestObject();
-	        audio.updateFreq(4000 * Math.pow(Math.exp(-closestDist/150), (1/5)));
-	        //audio.updateGain(Math.pow(Math.exp(-closestDist / 150), (1 / 5)));
+	        //audio.updateFreq(250* Math.pow(Math.exp(-closestDist/100), (1/5)));
+            //audio.updateGain(Math.pow(Math.exp(-closestDist/150), (1/5)));
+
+            geiger.setPeriod(closestDist);
 	    }
 
 	    // check hits with objects
@@ -153,9 +155,9 @@ User.prototype.updateFromKinect = function (user) {
 	        var delta = this.skeleton.LeftHand.three.position.y - this.skeleton.RightHand.three.position.y;
 	        this.settingHeightOf.grow(null,Math.abs(delta),null);
 	    }
-    
+
     /*
-    // TEST FOR CALIBRATION 
+    // TEST FOR CALIBRATION
     var caltest = document.getElementById('calTest');
     if (caltest !== null) {
 	    caltest.style.top = (calibration.getTableY(this.skeleton['LeftHand'].three.position.z)) + 'px';
