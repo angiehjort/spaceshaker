@@ -136,18 +136,18 @@ User.prototype.updateFromKinect = function (user) {
 
         switch (proximityStyle){
             case "Freq":
-            audio.updateFreq(250* Math.pow(Math.exp(-closestDist/100), (1/5)));
-            break;
+            	audio.updateFreq(250* Math.pow(Math.exp(-closestDist/100), (1/5)));
+            	break;
 
             case "Geiger":
-            geiger.setPeriod(closestDist,0.5);
-            break;
+            	geiger.setPeriod(closestDist,0.5);
+            	break;
 
             case "PWM":
-            if (closestDist<1000){
-            geiger.setPeriod(500, (1-closestDist/1000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
-            }
-            break;
+	            if (closestDist<1000){
+	            	geiger.setPeriod(500, (1-closestDist/1000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
+	            }
+	            break;
         }
 
 

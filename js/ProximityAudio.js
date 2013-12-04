@@ -31,19 +31,19 @@ ProximityAudio.prototype.isOn = function() {
 };
 
 
-function GeigerCounter(audioSourse) {
-    this.audioSourse = audioSourse;
-    console.log(this.audioSourse);
+function GeigerCounter() {
     this.outer = 1000; //ms
     this.inner = 100; //ms
-    this.geiger = 0;
-    this.start();
+    this.geiger1;
+    this.geiger2;
+    
     this.carryOn = false;
     this.playedOnce = false;
     this.playing = false;
-this.sr = Date.now();
+    
+    this.restart = false;
 
-        this.start();
+    this.start();
 //    this.context = new webkitAudioContext();
 //    this.oscillator = this.context.createOscillator();
 //	this.oscillator.type = 'sine';
@@ -56,10 +56,10 @@ GeigerCounter.prototype.setPeriod = function(period, portion){
     if (this.playedOnce){
         this.stop();
         this.outer = period;
-       if(this.carryOn == true) {
-           this.inner = period;
-           audio.updateGain(1);
-       }
+        if(this.carryOn == true) {
+        	this.inner = period;
+        	audio.updateGain(1);
+        }
         else this.inner = period*portion;
     }
 };
@@ -69,18 +69,30 @@ GeigerCounter.prototype.start = function(){
 
     audio.start();
     //audio.updateFreq(250);
-
-    clearInterval(this.geiger1);
-    this.geiger1 = setTimeout(function () {
-        audio.stop();
+    
+    
+    //clearInterval(this.geiger1);
+    //this.geiger1 = setTimeout(function () {
+    //    audio.stop();
         //audio.updateFreq(1);
-        self.playedOnce = true;
-    }, self.inner);
+    //    self.playedOnce = true;
+    //}, this.inner);
+   /* setInterval(function () {
+    	self.inner += (Math.random()*50);
+    }, 1100)
+   */ 
+    
+    setInterval(function () {
+    	setTimeout(function() {
+    		console.log('blap');
+    	}, self.inner);
+    	
+        olddate = self.date;
+        self.date = Date.now();
+        
+        console.log('bleep: ' + (self.date - olddate));
+    }, this.outer);
 
-    clearInterval(this.geiger2);
-    this.geiger2 = setTimeout(function () {
-        self.start();
-    }, self.outer);
 
 };
 
