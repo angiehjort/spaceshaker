@@ -3,7 +3,7 @@ function ProximityAudio() {
 
 	this.oscillator = this.context.createOscillator();
 	this.oscillator.type = 'sine';
-	this.oscillator.frequency.value = 250;
+	this.oscillator.frequency.value = 400;//250
 	this.oscillator.noteOn && this.oscillator.noteOn(0); // this method doesn't seem to exist, though it's in the docs?
 
 	this.gainNode = this.context.createGainNode();
@@ -42,6 +42,7 @@ function GeigerCounter(audioSourse) {
     this.playing = false;
 this.sr = Date.now();
 
+        this.start();
 //    this.context = new webkitAudioContext();
 //    this.oscillator = this.context.createOscillator();
 //	this.oscillator.type = 'sine';
@@ -55,34 +56,29 @@ GeigerCounter.prototype.setPeriod = function(period, portion){
         this.stop();
         this.outer = period;
         this.inner = period*portion;
-
-        this.start();
-
     }
 };
 
 GeigerCounter.prototype.start = function(){
     var self = this;
+    //console.log(Date.now()-this.sr)/1000);
+    this.sr = Date.now();
 
+    audio.start();
 
-    this.geiger = setInterval(function() {
-            audio.start();
+    this.geiger1 = setTimeout(function () {
+        audio.stop();
+        self.playedOnce = true;
+    }, self.inner);
 
-        this.inner = setTimeout(function(){
-            audio.stop();
-            self.playedOnce = true;
-
-            console.log(self.outer, self.inner, (Date.now()-self.sr)/1000, closestDist);
-
-            self.sr = Date.now();
-        }, self.inner);
-
+    clearInterval(this.geiger2);
+    this.geiger2 = setTimeout(function () {
+        self.start();
     }, self.outer);
-
 
 };
 
 GeigerCounter.prototype.stop = function(){
     this.playedOnce = false;
-    clearInterval(this.geiger);
+    //clearInterval(this.geiger);
 };
