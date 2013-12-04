@@ -16,6 +16,7 @@
     <script src='js/TouchArea.js'></script>
     <script src='js/Explanation.js'></script>
     <script src='js/Calibration.js'></script>
+    <script src='js/Settings.js'></script>
 
     <script type="text/javascript">
 //We will need to experiment with different types of output and see what works better:
@@ -23,7 +24,7 @@
 //hapting collisions with objects or not
 //hapting the process of carrying objects or not
 //experimenting with mono or stereo haptic output (since we also want to keep sound output)
-
+var proximityStyle = "PWM";
 
         var scene;
         var audio;
@@ -62,6 +63,8 @@
             audio = new ProximityAudio();
             audio.start();
             geiger = new GeigerCounter(document.getElementById('audio_ping'));
+
+            settings = new Settings(document.getElementById('settings'));
 
             audio.stop();
 
@@ -226,6 +229,34 @@
         	z-index: 1000;
         	display: none;
         }
+
+        .btn{
+            width: 60px;
+        	height: 40px;
+            margin: 10px;
+            text-align:center;
+            font-size: 100%;
+            font-family:sans-serif;
+            background:#ff8000;
+            border-radius: 5;
+            opacity: 0.8;
+            border: 3px inset #d4880d;
+
+        }
+        .down{
+            background:#e87603;
+        }
+        #settings {
+        	width: 200px;
+        	height: 400px;
+            top: 20px;
+            left: 20px;
+            position: absolute;
+            background:#fff9b6;
+            opacity: 0.8;
+        	position: absolute;
+        }
+
         #calibration #calOne {
         	top: 0px;
         	left: 0px;
@@ -253,6 +284,8 @@
 		<div id="calTwo" class="calSpot">Touch me</div>
 	</div>
 
+
+
 	<div id="main">
 
 	    <audio id="audio_red" src="audio/red.wav" preload="auto"></audio>
@@ -269,6 +302,8 @@
 	        </div>
 
 	    </div>
+
+        <div id="settings"></div>
 
 	</div>
 

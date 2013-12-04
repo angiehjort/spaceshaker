@@ -130,9 +130,14 @@ User.prototype.updateFromKinect = function (user) {
 	        //audio.updateFreq(250* Math.pow(Math.exp(-closestDist/100), (1/5)));
             //audio.updateGain(Math.pow(Math.exp(-closestDist/150), (1/5)));
             //geiger.setPeriod(closestDist,0.5);
-            if (closestDist<1000){
-            geiger.setPeriod(1000, 1-closestDist/1000);
-            }
+
+            //Geiger style
+            geiger.setPeriod(closestDist,0.5);
+
+            //PWM style
+            //if (closestDist<1000){
+            //geiger.setPeriod(1000, 1-closestDist/1000);
+            //}
 	    }
 
 	    // check hits with objects
