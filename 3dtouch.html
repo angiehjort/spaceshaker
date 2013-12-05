@@ -62,7 +62,7 @@
             
             audio = new Audio();
             audio.createChannel('left', 'oscillator', { freq: 200, gain: 1});
-            //audio.createChannel('right', 'oscillator', { freq: 200, gain: 1});
+            audio.createChannel('right', 'oscillator', { freq: 200, gain: 1});
 
             HiddenObject.generateObjects(
                 ['red'], //, 'green', 'blue'],
