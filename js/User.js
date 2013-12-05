@@ -143,11 +143,13 @@ User.prototype.updateFromKinect = function (user) {
 			
 			        case "pulseFrequency":
 			        	audio.channels[channel].updateInterval(closestDist, 0.5);
+                        audio.channels[channel].updateGain(Math.pow(Math.exp(-closestDist/20), (1/10)));
 			        	break;
 			
 			        case "pulseWidth":
 			            if (closestDist<2000){
 			            	audio.channels[channel].updateInterval(500, (1-closestDist/2000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
+                            audio.channels[channel].updateGain(Math.pow(Math.exp(-closestDist/20), (1/10)));
 			            }
 			            break;    	
 	        	}
