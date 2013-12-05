@@ -68,7 +68,7 @@ User.prototype.startCarrying = function (obj) {
     // user carries object
     this.carries = obj;
     // stop proximity audio
-    //audio.stop();
+    audio.stop();
     vibro.carryOn = true;
     vibro.refresh();
     console.log('start carrying');
@@ -76,7 +76,8 @@ User.prototype.startCarrying = function (obj) {
 
 User.prototype.stopCarrying = function (obj) {
     this.carries = null;
-    //audio.start();
+    obj.release();
+    audio.start();
     vibro.carryOn = false;
     vibro.refresh();
     console.log('stop carrying');
@@ -88,7 +89,7 @@ User.prototype.carry = function (obj) {
     if (this.carries == null) this.startCarrying(obj);
 
     // audio feedback for carrying
-    //if(!mute)document.getElementById('audio_ping').play();
+    if(!mute)document.getElementById('audio_ping').play();
 
     // update carried object position to average of hands
     var moveTo = {

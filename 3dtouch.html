@@ -275,6 +275,25 @@ canvas {
         opacity: 0.8;
         position: absolute;
 }
+
+
+
+/* GLOW ANIMATION */
+
+.ani {
+    background-color: yellow;
+    border: 1px solid transparent;
+    -webkit-transition: border 0.1s linear, box-shadow 0.1s linear;
+       -moz-transition: border 0.1s linear, box-shadow 0.1s linear;
+            transition: border 0.1s linear, box-shadow 0.1s linear;
+}
+
+.active {
+    border-color: blue;
+    -webkit-box-shadow: 0 0 20px blue;
+       -moz-box-shadow: 0 0 20px blue;
+            box-shadow: 0 0 20px blue;
+}
 </style>
 </head>
 
