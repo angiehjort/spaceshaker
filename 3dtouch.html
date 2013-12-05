@@ -15,8 +15,6 @@
     <script src='js/audio/Audio.js'></script>
     <script src='js/audio/FileChannel.js'></script>
     <script src='js/audio/OscillatorChannel.js'></script>
-    <script src='js/ProximityVibro.js'></script>
-    <script src='js/ProximityAudio.js'></script>
     <script src='js/TouchArea.js'></script>
     <script src='js/Explanation.js'></script>
     <script src='js/Calibration.js'></script>
@@ -53,16 +51,18 @@
 
             initZig();
             initThree();
+            initSettings();
 
             Hammer.plugins.showTouches();
             Hammer.plugins.fakeMultitouch();
 
             touchArea = new TouchArea(document.getElementById('touch'));
-            settings = new Settings(document.getElementById('settings'));
             explanation = new Explanation(document.getElementById('explanation'));
-            audio = new ProximityAudio();
-            vibro = new ProximityVibro();
-            audio.start();
+            
+            
+            audio = new Audio();
+            audio.createChannel('left', 'oscillator', { freq: 200, gain: 1});
+            //audio.createChannel('right', 'oscillator', { freq: 200, gain: 1});
 
             HiddenObject.generateObjects(
                 ['red'], //, 'green', 'blue'],
@@ -85,9 +85,6 @@
                     d: 200
                 }
             );
-            //objects.push(new HiddenObject('red', {width: 300, height: 300, depth: 300 }, {x: -500, y: 500, z: 2100}));
-            //objects.push(new HiddenObject('blue', {width: 300, height: 300, depth: 300 }, {x: 400, y: 500, z: 1400}));
-            //objects.push(new HiddenObject('green', {width: 300, height: 300, depth: 300 }, {x: 1000, y: 100, z: 3000}));
         }
 
         function initZig() {
@@ -96,8 +93,8 @@
                 onuserfound: function(user) {
                     //if (!zig.explained) explanation.setText("Pinch-zoom here to create new squares. Hold shift to emulate on desktop");
                     users.push(new User(user));
+                    audio.start();
                 },
-
                 onuserlost: function(user) {
                     for (u in users) {
                         if (users[u].id == user.id) users[u].destruct();
@@ -304,7 +301,29 @@ canvas {
 	        </div>
 
 	    </div>
-	    <div id="settings"></div>
+	    <div id="settings">
+	    	<div id="left" data-channel="left">
+	    	
+	    		<strong>Left</strong>
+	    		
+	    		<input type="button" class="frequency" value="frequency" data-type="frequency">
+	    		<input type="button" class="amplitude" value="amplitude" data-type="amplitude">
+	    		<input type="button" class="pulseWidth" value="pulse width" data-type="pulseWidth">
+	    		<input type="button" class="pulseFrequency" value="pulse frequency" data-type="pulseFrequency">
+	    	
+	    	</div>
+	    	
+	    	<div id="right" data-channel="right">
+	    	
+	    		<strong>Right</strong>
+	    		
+	    		<input type="button" class="frequency" value="frequency" data-type="frequency">
+	    		<input type="button" class="amplitude" value="amplitude" data-type="amplitude">
+	    		<input type="button" class="pulseWidth" value="pulse width" data-type="pulseWidth">
+	    		<input type="button" class="pulseFrequency" value="pulse frequency" data-type="pulseFrequency">
+	    		    	
+	    	</div>
+	    </div>
 
 	</div>
 

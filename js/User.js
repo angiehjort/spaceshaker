@@ -50,14 +50,16 @@ User.prototype.destruct = function () {
     users.splice(users.indexOf(this), 1); // remove user from array
 };
 
-User.prototype.distanceToClosestObject = function () {
+User.prototype.distanceToClosestObject = function (joint) {
     var closestDist = null;
-    for (i in objects) {
-        distance = objects[i].distanceTo(this.skeleton.RightHand.three);
-        if (closestDist == null || closestDist > distance) {
-            closestDist = distance;
-        }
-    }
+    if (typeof this.skeleton[joint] !== 'undefined') {
+	    for (i in objects) {
+	        distance = objects[i].distanceTo(this.skeleton[joint].three);
+	        if (closestDist == null || closestDist > distance) {
+	            closestDist = distance;
+	        }
+	    }
+    }	
     return closestDist;
 };
 
@@ -113,72 +115,69 @@ User.prototype.updateFromKinect = function (user) {
 
 	lpassOld = 0.5;
 
-	    // update coordinates
-	    for (joint in this.skeleton) {
-	        if (user.skeleton[zig.Joint[joint]]) {
-	            this.skeleton[joint].three.position.x = ((1-lpassOld) * user.skeleton[zig.Joint[joint]].position[0] + lpassOld * this.skeleton[joint].three.position.x);
-	            this.skeleton[joint].three.position.y = ((1-lpassOld) * user.skeleton[zig.Joint[joint]].position[1] + lpassOld * this.skeleton[joint].three.position.y);
-	            this.skeleton[joint].three.position.z = ((1-lpassOld) * user.skeleton[zig.Joint[joint]].position[2] + lpassOld * this.skeleton[joint].three.position.z);
-	        }
-	    }
-
-
+    // update coordinates
+    for (joint in this.skeleton) {
+        if (user.skeleton[zig.Joint[joint]]) {
+            this.skeleton[joint].three.position.x = ((1-lpassOld) * user.skeleton[zig.Joint[joint]].position[0] + lpassOld * this.skeleton[joint].three.position.x);
+            this.skeleton[joint].three.position.y = ((1-lpassOld) * user.skeleton[zig.Joint[joint]].position[1] + lpassOld * this.skeleton[joint].three.position.y);
+            this.skeleton[joint].three.position.z = ((1-lpassOld) * user.skeleton[zig.Joint[joint]].position[2] + lpassOld * this.skeleton[joint].three.position.z);
+        }
+    }
+    
     // update audio distance feedback
     if (this.carries == null) {
-        closestDist = this.distanceToClosestObject();
 
-        //audio.updateFreq(4000 * Math.pow(Math.exp(-closestDist/150), (1/5)));
-
-
-        switch (proximityStyle){
-            case "Freq":
-            	vibro.updateFreq(250* Math.pow(Math.exp(-closestDist/100), (1/5)));
-            	break;
-
-            case "Geiger":
-            	vibro.updateInterval(closestDist,0.5);
-            	break;
-
-            case "PWM":
-	            if (closestDist<2000){
-	            	vibro.updateInterval(500, (1-closestDist/2000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
-	            }
-	            break;
-
-            case "Gain":
-                vibro.updateGain(Math.pow(Math.exp(-closestDist/20), (1/10)));
-                break;
+        channelNames = { 'left': 'Left', 'right': 'Right' }; // lcase for system, ucase for kinect
+        
+        for (channel in channelNames) {
+        	if (typeof audio.channels[channel] !== 'undefined') {
+	        	closestDist = this.distanceToClosestObject(channelNames[channel] + 'Hand'); // 'LeftHand/RightHand' uppercase!
+	        	switch(audio.channels[channel].type) {
+			        case "frequency":
+			        	audio.channels[channel].updateFreq(250 * Math.pow(Math.exp(-closestDist/100), (1/5)));
+			        	break;
+			        	
+			        case "amplitude":
+			        	audio.channels[channel].updateGain(Math.pow(Math.exp(-closestDist/20), (1/10)));
+			            break;    
+			
+			        case "pulseFrequency":
+			        	audio.channels[channel].updateInterval(closestDist, 0.5);
+			        	break;
+			
+			        case "pulseWidth":
+			            if (closestDist<2000){
+			            	audio.channels[channel].updateInterval(500, (1-closestDist/2000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
+			            }
+			            break;    	
+	        	}
+        	}
         }
 
+	}
 
-
-
-
-
+    // check hits with objects
+    if (this.settingHeightOf == null && this.settingBaseOf == null) {
+	    for (i in objects) {
+	        obj = objects[i];
+	        if (obj.collidesWith(this.skeleton.LeftHand.three) && obj.collidesWith(this.skeleton.RightHand.three)) {
+	            if (this.carries == null || this.carries == obj)
+	                this.carry(obj);
+	        } else {
+	            if (this.carries == obj)
+	                this.stopCarrying();
+	            if (obj.collidesWith(this.skeleton.LeftHand.three) || obj.collidesWith(this.skeleton.RightHand.three)) {
+	                obj.found();
+	            }
+	        }
 	    }
+    }
 
-	    // check hits with objects
-	    if (this.settingHeightOf == null && this.settingBaseOf == null) {
-		    for (i in objects) {
-		        obj = objects[i];
-		        if (obj.collidesWith(this.skeleton.LeftHand.three) && obj.collidesWith(this.skeleton.RightHand.three)) {
-		            if (this.carries == null || this.carries == obj)
-		                this.carry(obj);
-		        } else {
-		            if (this.carries == obj)
-		                this.stopCarrying();
-		            if (obj.collidesWith(this.skeleton.LeftHand.three) || obj.collidesWith(this.skeleton.RightHand.three)) {
-		                obj.found();
-		            }
-		        }
-		    }
-	    }
-
-	    // update height of newly created element
-	    if (this.settingHeightOf != null) {
-	        var delta = this.skeleton.LeftHand.three.position.y - this.skeleton.RightHand.three.position.y;
-	        this.settingHeightOf.grow(null,Math.abs(delta),null);
-	    }
+    // update height of newly created element
+    if (this.settingHeightOf != null) {
+        var delta = this.skeleton.LeftHand.three.position.y - this.skeleton.RightHand.three.position.y;
+        this.settingHeightOf.grow(null,Math.abs(delta),null);
+    }
 
     /*
     // TEST FOR CALIBRATION
