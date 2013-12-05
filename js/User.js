@@ -33,11 +33,6 @@ function User(kinectUser) {
                 color: 0xffff00, transparent: true, opacity: this.opacity
             }))
         }
-//        Waist: {
-//            three: new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), new THREE.MeshLambertMaterial({
-//                color: 0xffff00, transparent: true, opacity: this.opacity
-//            }))
-//        }
     };
     //this.skeleton.Head.three.geometry
 
@@ -55,14 +50,16 @@ User.prototype.destruct = function () {
     users.splice(users.indexOf(this), 1); // remove user from array
 };
 
-User.prototype.distanceToClosestObject = function () {
+User.prototype.distanceToClosestObject = function (joint) {
     var closestDist = null;
-    for (i in objects) {
-        distance = objects[i].distanceTo(this.skeleton.RightHand.three);
-        if (closestDist == null || closestDist > distance) {
-            closestDist = distance;
-        }
-    }
+    if (typeof this.skeleton[joint] !== 'undefined') {
+	    for (i in objects) {
+	        distance = objects[i].distanceTo(this.skeleton[joint].three);
+	        if (closestDist == null || closestDist > distance) {
+	            closestDist = distance;
+	        }
+	    }
+    }	
     return closestDist;
 };
 
@@ -71,13 +68,17 @@ User.prototype.startCarrying = function (obj) {
     // user carries object
     this.carries = obj;
     // stop proximity audio
-    audio.stop();
+    //audio.stop();
+    vibro.carryOn = true;
+    vibro.refresh();
     console.log('start carrying');
 };
 
 User.prototype.stopCarrying = function (obj) {
     this.carries = null;
-    audio.start();
+    //audio.start();
+    vibro.carryOn = false;
+    vibro.refresh();
     console.log('stop carrying');
 };
 
@@ -87,7 +88,7 @@ User.prototype.carry = function (obj) {
     if (this.carries == null) this.startCarrying(obj);
 
     // audio feedback for carrying
-    if(!mute)document.getElementById('audio_ping').play();
+    //if(!mute)document.getElementById('audio_ping').play();
 
     // update carried object position to average of hands
     var moveTo = {
@@ -103,7 +104,7 @@ User.prototype.getPosition = function (joint) {
 	if (typeof this.skeleton[joint] === 'undefined') {
 		console.log('User does not have joint ' + joint);
 		return {};
-	} 
+	}
 	else {
 		return this.skeleton[joint].three.position;
 	}
@@ -112,57 +113,80 @@ User.prototype.getPosition = function (joint) {
 /* UPDATE USER MODEL AND CARRIED OBJECTS */
 User.prototype.updateFromKinect = function (user) {
 
-    if (this.timestamp < Date.now() - this.timeResolution) {
-	    this.timestamp = Date.now();
+	lpassOld = 0.5;
 
-	    // update coordinates
-	    for (joint in this.skeleton) {
-	        if (user.skeleton[zig.Joint[joint]]) {
-	            this.skeleton[joint].three.position.x = user.skeleton[zig.Joint[joint]].position[0];
-	            this.skeleton[joint].three.position.y = user.skeleton[zig.Joint[joint]].position[1];
-	            this.skeleton[joint].three.position.z = user.skeleton[zig.Joint[joint]].position[2];
+    // update coordinates
+    for (joint in this.skeleton) {
+        if (user.skeleton[zig.Joint[joint]]) {
+            this.skeleton[joint].three.position.x = ((1-lpassOld) * user.skeleton[zig.Joint[joint]].position[0] + lpassOld * this.skeleton[joint].three.position.x);
+            this.skeleton[joint].three.position.y = ((1-lpassOld) * user.skeleton[zig.Joint[joint]].position[1] + lpassOld * this.skeleton[joint].three.position.y);
+            this.skeleton[joint].three.position.z = ((1-lpassOld) * user.skeleton[zig.Joint[joint]].position[2] + lpassOld * this.skeleton[joint].three.position.z);
+        }
+    }
+    
+    // update audio distance feedback
+    if (this.carries == null) {
+
+        channelNames = { 'left': 'Left', 'right': 'Right' }; // lcase for system, ucase for kinect
+        
+        for (channel in channelNames) {
+        	if (typeof audio.channels[channel] !== 'undefined') {
+	        	closestDist = this.distanceToClosestObject(channelNames[channel] + 'Hand'); // 'LeftHand/RightHand' uppercase!
+	        	switch(audio.channels[channel].type) {
+			        case "frequency":
+			        	audio.channels[channel].updateFreq(250 * Math.pow(Math.exp(-closestDist/20), (1/10))); //100,5
+			        	break;
+			        	
+			        case "amplitude":
+			        	audio.channels[channel].updateGain(Math.pow(Math.exp(-closestDist/20), (1/10)));
+			            break;    
+			
+			        case "pulseFrequency":
+			        	audio.channels[channel].updateInterval(closestDist, 0.5);
+			        	break;
+			
+			        case "pulseWidth":
+			            if (closestDist<2000){
+			            	audio.channels[channel].updateInterval(500, (1-closestDist/2000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
+			            }
+			            break;    	
+	        	}
+        	}
+        }
+
+	}
+
+    // check hits with objects
+    if (this.settingHeightOf == null && this.settingBaseOf == null) {
+	    for (i in objects) {
+	        obj = objects[i];
+	        if (obj.collidesWith(this.skeleton.LeftHand.three) && obj.collidesWith(this.skeleton.RightHand.three)) {
+	            if (this.carries == null || this.carries == obj)
+	                this.carry(obj);
+	        } else {
+	            if (this.carries == obj)
+	                this.stopCarrying();
+	            if (obj.collidesWith(this.skeleton.LeftHand.three) || obj.collidesWith(this.skeleton.RightHand.three)) {
+	                obj.found();
+	            }
 	        }
 	    }
-
-	    // update audio distance feedback
-	    if (this.carries == null) {
-	        closestDist = this.distanceToClosestObject();
-	        //audio.updateFreq(250 * Math.pow(Math.exp(-closestDist/150), (1/5)));
-	        audio.updateGain(Math.pow(Math.exp(-closestDist / 150), (1 / 5)));
-	    }
-
-	    // check hits with objects
-	    if (this.settingHeightOf == null && this.settingBaseOf == null) {
-		    for (i in objects) {
-		        obj = objects[i];
-		        if (obj.collidesWith(this.skeleton.LeftHand.three) && obj.collidesWith(this.skeleton.RightHand.three)) {
-		            if (this.carries == null || this.carries == obj)
-		                this.carry(obj);
-		        } else {
-		            if (this.carries == obj)
-		                this.stopCarrying();
-		            if (obj.collidesWith(this.skeleton.LeftHand.three) || obj.collidesWith(this.skeleton.RightHand.three)) {
-		                obj.found();
-		            }
-		        }
-		    }
-	    }
-
-	    // update height of newly created element
-	    if (this.settingHeightOf != null) {
-	        var delta = this.skeleton.LeftHand.three.position.y - this.skeleton.RightHand.three.position.y;
-	        this.settingHeightOf.grow(null,Math.abs(delta),null);
-	    }
     }
-    
-    
-    // TEST FOR CALIBRATION 
+
+    // update height of newly created element
+    if (this.settingHeightOf != null) {
+        var delta = this.skeleton.LeftHand.three.position.y - this.skeleton.RightHand.three.position.y;
+        this.settingHeightOf.grow(null,Math.abs(delta),null);
+    }
+
+    /*
+    // TEST FOR CALIBRATION
     var caltest = document.getElementById('calTest');
     if (caltest !== null) {
-	    caltest.style.top = ((this.skeleton['LeftHand'].three.position.z - calibration.offset.z) * calibration.ratio.z) + 'px';
-	    caltest.style.left = ((this.skeleton['LeftHand'].three.position.x - calibration.offset.x) * calibration.ratio.x) + 'px';
-	    console.log(caltest.style.top, caltest.style.left);
+	    caltest.style.top = (calibration.getTableY(this.skeleton['LeftHand'].three.position.z)) + 'px';
+	    caltest.style.left = (calibration.getTableX(this.skeleton['LeftHand'].three.position.x)) + 'px';
     }
+    */
 };
 
 

@@ -57,17 +57,19 @@ HiddenObject.prototype.checkDrop = function() {
 		user = users[i];
 		if (user != null && user.carries != null) {
 			if (user.carries == this) {
-				if(!mute)soundYe.play();
+				//if(!mute)soundYe.play();
 				this.destruct();
 				user.stopCarrying();
 			} else {
-				if(!mute)soundNo.play();
+				//if(!mute)soundNo.play();
 			}
 		}
-	}	
+	}
 };
 HiddenObject.prototype.found = function() {
-	if(!mute)this.audioFound.play();
+	//if(!mute)this.audioFound.play();
+    //geiger.setPeriod(1000,1);
+
 };
 HiddenObject.prototype.collidesWith = function(mesh) {
 	return this.mesh.collidesWith(mesh);
@@ -106,7 +108,8 @@ HiddenObject.prototype.updatePosition2d = function (position) {
 
 
 HiddenObject.prototype.grow = function (W, H, D) {
-
+    this.growWFactor = calibration.ratio.x;
+    this.growDFactor = calibration.ratio.z;
     if (W == null || W * this.growWFactor < this.growWminLimit || W * this.growWFactor > this.growWmaxLimit) {
         ratioW = 1; //W = this.mesh.geometry.width/this.growWFactor;
     } else {
@@ -140,7 +143,6 @@ for (point in this.mesh.geometry.vertices){
     this.div.style.border= H/20 + 'px inset grey';
 
     this.mesh.geometry.verticesNeedUpdate = true;
-
 
     return 'object base updated';
 };

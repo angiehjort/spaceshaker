@@ -2,11 +2,12 @@
 function Calibration() {
 	this.points = [];
 	this.elements = document.getElementById('calibration').getElementsByClassName('calSpot');
+
 	this.currentEl = 0;
 	this.ratio = {};
 	this.offset = {};
-
 	this.changeCurrent();
+
 }
 
 Calibration.prototype.changeCurrent = function() {
@@ -72,6 +73,25 @@ Calibration.prototype.calibrate = function() {
 	console.log(this);
 	testdiv = document.createElement('div');
 	testdiv.id = 'calTest';
-	document.getElementById('calibration').appendChild(testdiv);
+	//document.getElementById('calibration').appendChild(testdiv);
+
+    audio.start();
+    document.getElementById('main').style.visibility = 'visible';
 }
+
+
+Calibration.prototype.getTableX = function(kinectX) {
+	return (kinectX - calibration.offset.x) * calibration.ratio.x;
+}
+Calibration.prototype.getTableY = function(kinectZ) {
+	return (kinectZ - calibration.offset.z) * calibration.ratio.z;
+}
+Calibration.prototype.getKinectX = function(tableX) {
+	return (tableX / calibration.ratio.x) + calibration.offset.x;
+}
+Calibration.prototype.getKinectZ = function(tableY) {
+	return (tableY / calibration.ratio.z) + calibration.offset.z;
+}
+
+
 

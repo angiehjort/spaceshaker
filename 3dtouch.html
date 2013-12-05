@@ -1,9 +1,9 @@
 <html>
-
 <head>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <!--script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script-->
 
     <script src='js/lib/zig.js'></script>
+    <script src='js/lib/jquery-2.0.3.js'></script>
     <script src='js/lib/three.js'></script>
     <script src="js/lib/hammer.js"></script>
     <script src="js/lib/hammer.fakemultitouch.js"></script>
@@ -12,42 +12,57 @@
     <script src='js/THREE.mesh.prototype.js'></script>
     <script src='js/User.js'></script>
     <script src='js/HiddenObject.js'></script>
-    <script src='js/ProximityAudio.js'></script>
+    <script src='js/audio/Audio.js'></script>
+    <script src='js/audio/FileChannel.js'></script>
+    <script src='js/audio/OscillatorChannel.js'></script>
     <script src='js/TouchArea.js'></script>
     <script src='js/Explanation.js'></script>
     <script src='js/Calibration.js'></script>
+    <script src='js/Settings.js'></script>
 
     <script type="text/javascript">
+//We will need to experiment with different types of output and see what works better:
+//hapting proximity between hands and objects to motor frequency or volume or pulse rate
+//hapting collisions with objects or not
+//hapting the process of carrying objects or not
+//experimenting with mono or stereo haptic output (since we also want to keep sound output)
+
+            var proximityStyle = 'PWM';
+
         var scene;
         var audio;
         var calibration;
 
         var users = new Array();
         var objects = new Array();
+        var mute = false;
 
         var boundaries;
 
         function initCalibration() {
-            initZig();
             initMain();
-
-			calibration = new Calibration();
+                        calibration = new Calibration();
 
         }
 
         function initMain() {
-            // make sure you add <div id='radar'></div> to your html body
-            initThree();
             document.oncontextmenu = function() { return false; };
+            document.getElementById('main').style.visibility = 'visible';
+
+            initZig();
+            initThree();
+            initSettings();
 
             Hammer.plugins.showTouches();
             Hammer.plugins.fakeMultitouch();
 
-            mute = false;
-
             touchArea = new TouchArea(document.getElementById('touch'));
             explanation = new Explanation(document.getElementById('explanation'));
-            audio = new ProximityAudio();
+            
+            
+            audio = new Audio();
+            audio.createChannel('left', 'oscillator', { freq: 200, gain: 1});
+            //audio.createChannel('right', 'oscillator', { freq: 200, gain: 1});
 
             HiddenObject.generateObjects(
                 ['red'], //, 'green', 'blue'],
@@ -70,9 +85,6 @@
                     d: 200
                 }
             );
-            //objects.push(new HiddenObject('red', {width: 300, height: 300, depth: 300 }, {x: -500, y: 500, z: 2100}));
-            //objects.push(new HiddenObject('blue', {width: 300, height: 300, depth: 300 }, {x: 400, y: 500, z: 1400}));
-            //objects.push(new HiddenObject('green', {width: 300, height: 300, depth: 300 }, {x: 1000, y: 100, z: 3000}));
         }
 
         function initZig() {
@@ -81,8 +93,8 @@
                 onuserfound: function(user) {
                     //if (!zig.explained) explanation.setText("Pinch-zoom here to create new squares. Hold shift to emulate on desktop");
                     users.push(new User(user));
+                    audio.start();
                 },
-
                 onuserlost: function(user) {
                     for (u in users) {
                         if (users[u].id == user.id) users[u].destruct();
@@ -127,130 +139,193 @@
         }
 
 
-        document.addEventListener('DOMContentLoaded', initCalibration, false);
+       //document.addEventListener('DOMContentLoaded', initCalibration, false);
+         document.addEventListener('DOMContentLoaded', initMain, false);
     </script>
     <style>
-        * { overflow:hidden; }
-        body {
-        	margin: 0;
-        	padding: 0;
-            background-image:url('http://2.bp.blogspot.com/-NwW8Qm05qW0/UOQjigl7EcI/AAAAAAAAD7c/4RG9Jn8FxcE/s1600/textured_paper_background-vanilla_yellow.jpg');
-            background-repeat:repeat;
-            overflow: hidden;
-        }
-        #three {
-            position: fixed;
-            left: 50%;
-            margin-left: -15%;
-            margin-top: 50px;
-        	width: 30%;
-        	height: 50%;
-            background:#fffbc9;
-            border: 1px solid grey;
-            opacity: 0.8;
-            border-radius: 4px;
-        }
+* {
+        overflow: hidden;
+}
 
-        #touch {
-            overflow: hidden;
-            position:fixed;
-            top:0px;
-            left:0px;
+body {
+        margin: 0;
+        padding: 0;
+        background-image: url('texture.jpg');
+        background-repeat: repeat;
+        overflow: hidden;
+}
 
-            width: 100%;
-        	height: 100%;
-        }
+#three {
+        position: fixed;
+        left: 50%;
+        margin-left: -15%;
+        margin-top: 50px;
+        width: 30%;
+        height: 50%;
+        background: #fffbc9;
+        border: 1px solid grey;
+        opacity: 0.8;
+        border-radius: 4px;
+}
 
-        #explanation{
-            text-align:center;
-            width:inherit;
-            bottom: 20px;
-            font-size: 100%;
-            font-family:sans-serif;
-            position: absolute;
-            background:#fff9b6;
-            opacity: 0.8;
-        }
+#touch {
+        overflow: hidden;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+}
 
-        .square {
-        	float: left;
-        	width: 100px;
-        	height: 100px;
-            opacity: 0.4;
-            border: 5px inset grey;
-            border-radius: 4px;
-            position:absolute;
-        }
+#explanation {
+        text-align: center;
+        width: inherit;
+        bottom: 20px;
+        font-size: 100%;
+        font-family: sans-serif;
+        position: absolute;
+        background: #fff9b6;
+        opacity: 0.8;
+}
 
-        .newDiv {
-            border-radius: 20px;
-        }
+.square {
+        float: left;
+        width: 100px;
+        height: 100px;
+        opacity: 0.4;
+        border: 5px inset grey;
+        border-radius: 4px;
+        position: absolute;
+}
 
+.newDiv {
+        border-radius: 20px;
+}
 
-        audio {
-        	display:  none;
-        }
-        canvas {
-        	-webkit-transform: scaleY(-1);
-        }
-        #calibration .calSpot {
-        	width: 80px;
-        	height: 80px;
-        	background: yellow;
-            opacity: 0.7;
-        	border-radius: 100%;
-            font-family:sans-serif;
-            text-align:center;
-            font-size: 100%;
-            line-height:80px;
-        	position: absolute;
-        	z-index: 1000;
-        	display: none;
-        }
-        #calibration #calOne {
-        	top: 0px;
-        	left: 0px;
-        }
-        #calibration #calTwo {
-        	bottom: 30px;
-        	right: 30px;
-        }
-        #calTest {
-        	width: 50px;
-        	height: 50px;
-        	background: yellow;
-        	opacity: 0.7;
-        	position: absolute;
-        }
-    </style>
+audio {
+        display: none;
+}
+
+canvas {
+        -webkit-transform: scaleY(-1);
+}
+
+#calibration .calSpot {
+        width: 80px;
+        height: 80px;
+        background: yellow;
+        opacity: 0.7;
+        border-radius: 100%;
+        font-family: sans-serif;
+        text-align: center;
+        font-size: 100%;
+        line-height: 80px;
+        position: absolute;
+        z-index: 1000;
+        display: none;
+}
+
+#calibration #calOne {
+        top: 0px;
+        left: 0px;
+}
+
+#calibration #calTwo {
+        bottom: 30px;
+        right: 30px;
+}
+
+#calTest {
+        width: 50px;
+        height: 50px;
+        background: yellow;
+        opacity: 0.7;
+        position: absolute;
+}
+
+#main {
+        visibility: hidden;
+}
+
+/* SETTINGS */
+#settings .btn {
+        width: 60px;
+        height: 40px;
+        margin: 10px;
+        text-align: center;
+        font-size: 100%;
+        font-family: sans-serif;
+        background: #ff8000;
+        border-radius: 5;
+        opacity: 0.8;
+        border: 3px inset #d4880d;
+}
+
+#settings .down {
+        background: #e87603;
+}
+
+#settings {
+        width: 100px;
+        height: 300px;
+        top: 20px;
+        left: 20px;
+        position: absolute;
+        background: #fff9b6;
+        opacity: 0.8;
+        position: absolute;
+}
+</style>
 </head>
 
 <body>
 
     <div id="calibration">
-		<div id="calOne" class="calSpot">Touch me</div>
-		<div id="calTwo" class="calSpot">Touch me</div>
-	</div>
+                <div id="calOne" class="calSpot">Touch me</div>
+                <div id="calTwo" class="calSpot">Touch me</div>
+        </div>
 
+        <div id="main">
 
-	<div id="main">
+            <audio id="audio_red" src="audio/red.wav" preload="auto"></audio>
+            <audio id="audio_green" src="audio/green.wav" preload="auto"></audio>
+            <audio id="audio_blue" src="audio/blue.wav" preload="auto"></audio>
+            <audio id="audio_ping" src="audio/ping.wav" preload="auto"></audio>
+            <audio id="soundYe" src="audio/horse.mp3" preload="auto"></audio>
+            <audio id="soundNo" src="audio/buzz.mp3" preload="auto"></audio>
 
-	    <audio id="audio_red" src="audio/red.wav" preload="auto"></audio>
-	    <audio id="audio_green" src="audio/green.wav" preload="auto"></audio>
-	    <audio id="audio_blue" src="audio/blue.wav" preload="auto"></audio>
-	    <audio id="audio_ping" src="audio/ping.wav" preload="auto"></audio>
-	    <audio id="soundYe" src="audio/horse.mp3" preload="auto"></audio>
-	    <audio id="soundNo" src="audio/buzz.mp3" preload="auto"></audio>
+            <div id="three"></div>
+            <div id="touch">
+                <div id="explanation">
+                    Hi! Stand here, so that Kinect can find you
+                </div>
 
-	    <div id="three"></div>
-	    <div id="touch">
-	        <div id="explanation">
-	            Hi! Stand here, so that Kinect can find you
-	        </div>
+            </div>
+            <div id="settings">
+                    <div id="left" data-channel="left">
+                    
+                            <strong>Left</strong>
+                            
+                            <input type="button" class="frequency" value="frequency" data-type="frequency">
+                            <input type="button" class="amplitude" value="amplitude" data-type="amplitude">
+                            <input type="button" class="pulseWidth" value="pulse width" data-type="pulseWidth">
+                            <input type="button" class="pulseFrequency" value="pulse frequency" data-type="pulseFrequency">
+                    
+                    </div>
+                    
+                    <div id="right" data-channel="right">
+                    
+                            <strong>Right</strong>
+                            
+                            <input type="button" class="frequency" value="frequency" data-type="frequency">
+                            <input type="button" class="amplitude" value="amplitude" data-type="amplitude">
+                            <input type="button" class="pulseWidth" value="pulse width" data-type="pulseWidth">
+                            <input type="button" class="pulseFrequency" value="pulse frequency" data-type="pulseFrequency">
+                                        
+                    </div>
+            </div>
 
-	    </div>
-
-	</div>
+        </div>
 
 </body>
 
