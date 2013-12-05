@@ -81,10 +81,10 @@ Audio.prototype.createChannel = function(name, type, p) {
 	// make new channel
 	switch(type) {
 		case 'oscillator':
-			this.channels[name] = new OscillatorChannel(this.context, p.freq, p.gain);
+			this.channels[name] = new OscillatorChannel(name, this.context, p.freq, p.gain);
 			break;
 		case 'file':
-			this.channels[name] = new FileChannel(this.context, p.file, p.gain);
+			this.channels[name] = new FileChannel(name, this.context, p.file, p.gain);
 			break;
 	}
 	
@@ -125,6 +125,7 @@ AudioChannel.prototype.stop = function() {
 /** mute/unmute **/
 AudioChannel.prototype.mute = function(freq) {
 	this.gainNode.gain.value = 0;
+	console.log('mute');
 };
 AudioChannel.prototype.unmute = function(freq) {
 	this.gainNode.gain.value = this.gain;

@@ -1,6 +1,6 @@
 <html>
 <head>
-    <!--script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 
     <script src='js/lib/zig.js'></script>
     <script src='js/lib/jquery-2.0.3.js'></script>
@@ -61,7 +61,7 @@
             
             
             audio = new Audio();
-            audio.createChannel('left', 'oscillator', { freq: 200, gain: 1});
+            audio.createChannel('left', 'oscillator', { freq: 1000, gain: 1});
             audio.createChannel('right', 'oscillator', { freq: 200, gain: 1});
 
             HiddenObject.generateObjects(
@@ -248,10 +248,10 @@ canvas {
 }
 
 /* SETTINGS */
-#settings .btn {
-        width: 60px;
+#settings input {
+        width: 120px;
         height: 40px;
-        margin: 10px;
+        margin: 20px 0;
         text-align: center;
         font-size: 100%;
         font-family: sans-serif;
@@ -259,21 +259,21 @@ canvas {
         border-radius: 5;
         opacity: 0.8;
         border: 3px inset #d4880d;
+        display: block;
 }
 
-#settings .down {
-        background: #e87603;
+#settings div {
+		float: left;
+		padding: 10px;
 }
 
 #settings {
-        width: 100px;
         height: 300px;
-        top: 20px;
-        left: 20px;
+        bottom: 20px;
+        right: 20px;
         position: absolute;
         background: #fff9b6;
         opacity: 0.8;
-        position: absolute;
 }
 
 
@@ -306,7 +306,7 @@ canvas {
 
         <div id="main">
 
-            <audio id="audio_red" src="audio/red.wav" preload="auto"></audio>
+            <audio id="audio_red" preload="auto"></audio>
             <audio id="audio_green" src="audio/green.wav" preload="auto"></audio>
             <audio id="audio_blue" src="audio/blue.wav" preload="auto"></audio>
             <audio id="audio_ping" src="audio/ping.wav" preload="auto"></audio>
@@ -320,29 +320,7 @@ canvas {
                 </div>
 
             </div>
-            <div id="settings">
-                    <div id="left" data-channel="left">
-                    
-                            <strong>Left</strong>
-                            
-                            <input type="button" class="frequency" value="frequency" data-type="frequency">
-                            <input type="button" class="amplitude" value="amplitude" data-type="amplitude">
-                            <input type="button" class="pulseWidth" value="pulse width" data-type="pulseWidth">
-                            <input type="button" class="pulseFrequency" value="pulse frequency" data-type="pulseFrequency">
-                    
-                    </div>
-                    
-                    <div id="right" data-channel="right">
-                    
-                            <strong>Right</strong>
-                            
-                            <input type="button" class="frequency" value="frequency" data-type="frequency">
-                            <input type="button" class="amplitude" value="amplitude" data-type="amplitude">
-                            <input type="button" class="pulseWidth" value="pulse width" data-type="pulseWidth">
-                            <input type="button" class="pulseFrequency" value="pulse frequency" data-type="pulseFrequency">
-                                        
-                    </div>
-            </div>
+            <div id="settings"></div>
 
         </div>
 

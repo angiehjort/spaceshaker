@@ -130,30 +130,38 @@ User.prototype.updateFromKinect = function (user) {
 
         channelNames = { 'left': 'Left', 'right': 'Right' }; // lcase for system, ucase for kinect
         
+        // update each channel
         for (channel in channelNames) {
         	if (typeof audio.channels[channel] !== 'undefined') {
+        		
+        		// get distance of hand mapped to channel
 	        	closestDist = this.distanceToClosestObject(channelNames[channel] + 'Hand'); // 'LeftHand/RightHand' uppercase!
-	        	switch(audio.channels[channel].type) {
-			        case "frequency":
-			        	audio.channels[channel].updateFreq(250 * Math.pow(Math.exp(-closestDist/20), (1/10))); //100,5
-			        	break;
-			        	
-			        case "amplitude":
-			        	audio.channels[channel].updateGain(Math.pow(Math.exp(-closestDist/20), (1/10)));
-			            break;    
-			
-			        case "pulseFrequency":
-			        	audio.channels[channel].updateInterval(closestDist, 0.5);
-                        audio.channels[channel].updateGain(Math.pow(Math.exp(-closestDist/20), (1/10)));
-			        	break;
-			
-			        case "pulseWidth":
-			            if (closestDist<2000){
-			            	audio.channels[channel].updateInterval(500, (1-closestDist/2000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
-                            audio.channels[channel].updateGain(Math.pow(Math.exp(-closestDist/20), (1/10)));
-			            }
-			            break;    	
+	        	
+	        	// change each wave property if it's turned on
+	        	for (waveType in audio.channels[channel].waveType) {
+	        		if (audio.channels[channel].waveType[waveType]) {
+			        	switch(waveType) {
+					        case "frequency":
+					        	audio.channels[channel].updateFreq(audio.channels[channel].freq * Math.pow(Math.exp(-closestDist/20), (1/10))); //100,5
+					        	break;
+					        	
+					        case "amplitude":
+					        	audio.channels[channel].updateGain(Math.pow(Math.exp(-closestDist/20), (1/10)));
+					            break;    
+					
+					        case "pulseFrequency":
+					        	audio.channels[channel].updateInterval(closestDist, 0.5);
+					        	break;
+					
+					        case "pulseWidth":
+					            if (closestDist<2000){
+					            	audio.channels[channel].updateInterval(500, (1-closestDist/2000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
+					            }
+					            break;    	
+			        	}
+	        		}
 	        	}
+	        	
         	}
         }
 

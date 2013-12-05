@@ -1,6 +1,7 @@
 
 
-var FileChannel = function(context, file, gain) {
+var FileChannel = function(name, context, file, gain) {
+	this.name = name;
 	this.buffer;
 	this.sources = [];
 	this.context = context;
