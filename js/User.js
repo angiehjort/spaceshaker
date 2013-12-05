@@ -134,7 +134,7 @@ User.prototype.updateFromKinect = function (user) {
 	        	closestDist = this.distanceToClosestObject(channelNames[channel] + 'Hand'); // 'LeftHand/RightHand' uppercase!
 	        	switch(audio.channels[channel].type) {
 			        case "frequency":
-			        	audio.channels[channel].updateFreq(250 * Math.pow(Math.exp(-closestDist/100), (1/5)));
+			        	audio.channels[channel].updateFreq(250 * Math.pow(Math.exp(-closestDist/20), (1/10))); //100,5
 			        	break;
 			        	
 			        case "amplitude":
