@@ -21,13 +21,6 @@
     <script src='js/Settings.js'></script>
 
     <script type="text/javascript">
-//We will need to experiment with different types of output and see what works better:
-//hapting proximity between hands and objects to motor frequency or volume or pulse rate
-//hapting collisions with objects or not
-//hapting the process of carrying objects or not
-//experimenting with mono or stereo haptic output (since we also want to keep sound output)
-
-            var proximityStyle = 'PWM';
 
         var scene;
         var audio;
@@ -39,15 +32,9 @@
 
         var boundaries;
 
-        function initCalibration() {
-            initMain();
-                        calibration = new Calibration();
-
-        }
 
         function initMain() {
             document.oncontextmenu = function() { return false; };
-            document.getElementById('main').style.visibility = 'visible';
 
             initZig();
             initThree();
@@ -58,7 +45,8 @@
 
             touchArea = new TouchArea(document.getElementById('touch'));
             explanation = new Explanation(document.getElementById('explanation'));
-            
+            calibration = new Calibration();
+            //document.getElementById('main').style.visibility = 'visible';
             
             audio = new Audio();
             audio.createChannel('left', 'oscillator', { freq: 1000, gain: 1});
@@ -66,32 +54,19 @@
 
             HiddenObject.generateObjects(
                 ['red'], //, 'green', 'blue'],
-                {
-                    x: {
-                        min: -500,
-                        max: 500
-                    },
-                    y: {
-                        min: 0,
-                        max: 700
-                    },
-                    z: {
-                        min: 1200,
-                        max: 1600
-                    }
-                }, {
-                    w: 200,
-                    h: 200,
-                    d: 200
-                }
+                {   x: {min: -500,max: 500},
+                    y: {min: 0,max: 700},
+                    z: {min: 1200,max: 1600}
+                }, {w: 200,h: 200,d: 200}
             );
+
+
         }
 
         function initZig() {
             zig.explained = false;
             zig.addListener({
                 onuserfound: function(user) {
-                    //if (!zig.explained) explanation.setText("Pinch-zoom here to create new squares. Hold shift to emulate on desktop");
                     users.push(new User(user));
                     audio.start();
                 },
@@ -132,15 +107,14 @@
             // action!
             function render() {
                 requestAnimationFrame(render);
-
                 renderer.render(scene, camera);
             }
             render();
         }
 
 
-       //document.addEventListener('DOMContentLoaded', initCalibration, false);
-         document.addEventListener('DOMContentLoaded', initMain, false);
+
+       document.addEventListener('DOMContentLoaded', initMain, false);
     </script>
     <style>
 * {
