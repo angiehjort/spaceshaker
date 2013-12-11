@@ -125,7 +125,7 @@ AudioChannel.prototype.stop = function() {
 /** mute/unmute **/
 AudioChannel.prototype.mute = function(freq) {
 	this.gainNode.gain.value = 0;
-	console.log('mute');
+	//console.log('mute');
 };
 AudioChannel.prototype.unmute = function(freq) {
 	this.gainNode.gain.value = this.gain;

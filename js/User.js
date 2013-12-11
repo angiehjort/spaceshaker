@@ -12,6 +12,7 @@ function User(kinectUser) {
 
     this.opacity = 0.3;
 
+    // create the skeleton and append the parts of the skeleton to a 3D scene
     this.skeleton = {
         Head: {
             three: new THREE.Mesh(new THREE.SphereGeometry(150,16,16), new THREE.MeshLambertMaterial({
@@ -34,7 +35,6 @@ function User(kinectUser) {
             }))
         }
     };
-    //this.skeleton.Head.three.geometry
 
     for (joint in this.skeleton) {
         scene.add(this.skeleton[joint].three);
@@ -43,14 +43,27 @@ function User(kinectUser) {
     console.log('User: new user added successfully');
 }
 
+
+
+
 User.prototype.destruct = function () {
+    // destruct is called when user is lost by Kinect
+    // remove parts of user from the 3D scene
     for (joint in this.skeleton) {
         scene.remove(this.skeleton[joint].three);
     }
-    users.splice(users.indexOf(this), 1); // remove user from array
+    // remove user from array of users
+    users.splice(users.indexOf(this), 1);
 };
 
+
+
+
 User.prototype.distanceToClosestObject = function (joint) {
+    // the function returns the distance from user's specified joint
+    // to a nearest HiddenObject in 3D
+    // uses HiddenObject' helping method distanceTo
+
     var closestDist = null;
     if (typeof this.skeleton[joint] !== 'undefined') {
 	    for (i in objects) {
@@ -58,32 +71,15 @@ User.prototype.distanceToClosestObject = function (joint) {
 	        if (closestDist == null || closestDist > distance) {
 	            closestDist = distance;
 	        }
-	    }
+	    }//i
     }	
     return closestDist;
 };
 
+
+
+
 /* OBJECT CARRYING */
-User.prototype.startCarrying = function (obj) {
-    // user carries object
-    this.carries = obj;
-    // stop proximity audio
-    audio.stop();
-    vibro.carryOn = true;
-    vibro.refresh();
-    console.log('start carrying');
-};
-
-User.prototype.stopCarrying = function (obj) {
-    this.carries = null;
-    obj.release();
-    audio.start();
-    vibro.carryOn = false;
-    vibro.refresh();
-    console.log('stop carrying');
-};
-
-
 User.prototype.carry = function (obj) {
     // start carrying if necessary
     if (this.carries == null) this.startCarrying(obj);
@@ -91,7 +87,7 @@ User.prototype.carry = function (obj) {
     // audio feedback for carrying
     if(!mute)document.getElementById('audio_ping').play();
 
-    // update carried object position to average of hands
+    // update carried HiddenObject position to average of hands
     var moveTo = {
         x: ((this.skeleton.LeftHand.three.position.x + this.skeleton.RightHand.three.position.x) / 2),
         y: ((this.skeleton.LeftHand.three.position.y + this.skeleton.RightHand.three.position.y) / 2),
@@ -100,8 +96,34 @@ User.prototype.carry = function (obj) {
     obj.updatePosition3d(moveTo);
 };
 
+User.prototype.startCarrying = function (obj) {
+    // user grabs HiddenObject
+    // stop proximity audio, update vibro feedback
+
+    this.carries = obj;
+    //audio.mute();
+    //vibro.carryOn = true;
+    //vibro.refresh();
+    console.log('start carrying');
+};
+
+User.prototype.stopCarrying = function (obj) {
+    // user releases HiddenObject
+    // start proximity audio, update vibro feedback
+
+    this.carries = null;
+    //audio.unmute();
+    //vibro.carryOn = false;
+    //vibro.refresh();
+    console.log('stop carrying');
+};
+
+
+
 
 User.prototype.getPosition = function (joint) {
+    // helper function - get the coordinates of a joint in skeleton
+
 	if (typeof this.skeleton[joint] === 'undefined') {
 		console.log('User does not have joint ' + joint);
 		return {};
@@ -111,12 +133,17 @@ User.prototype.getPosition = function (joint) {
 	}
 }
 
+
+
+
 /* UPDATE USER MODEL AND CARRIED OBJECTS */
 User.prototype.updateFromKinect = function (user) {
+    // periodic update from Kinect
+    // called separately for every user
 
 	lpassOld = 0.5;
 
-    // update coordinates
+    // update coordinates of the skeleton
     for (joint in this.skeleton) {
         if (user.skeleton[zig.Joint[joint]]) {
             this.skeleton[joint].three.position.x = ((1-lpassOld) * user.skeleton[zig.Joint[joint]].position[0] + lpassOld * this.skeleton[joint].three.position.x);
@@ -125,17 +152,19 @@ User.prototype.updateFromKinect = function (user) {
         }
     }
     
-    // update audio distance feedback
+
+    // update audio distance feedback, if not carrying the object now
     if (this.carries == null) {
 
-        channelNames = { 'left': 'Left', 'right': 'Right' }; // lcase for system, ucase for kinect
+        // lcase for system, ucase for kinect
+        channelNames = { 'left': 'Left', 'right': 'Right' };
         
-        // update each channel
+        // update each well-defined channel
         for (channel in channelNames) {
         	if (typeof audio.channels[channel] !== 'undefined') {
         		
-        		// get distance of hand mapped to channel
-	        	closestDist = this.distanceToClosestObject(channelNames[channel] + 'Hand'); // 'LeftHand/RightHand' uppercase!
+        		// get distance of hand mapped to channel, 'LeftHand/RightHand' uppercase!
+	        	closestDist = this.distanceToClosestObject(channelNames[channel] + 'Hand');
 	        	
 	        	// change each wave property if it's turned on
 	        	for (waveType in audio.channels[channel].waveType) {
@@ -155,34 +184,42 @@ User.prototype.updateFromKinect = function (user) {
 					
 					        case "pulseWidth":
 					            if (closestDist<2000){
-					            	audio.channels[channel].updateInterval(500, (1-closestDist/2000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
+					            audio.channels[channel].updateInterval(500, (1-closestDist/2000)*Math.pow(Math.exp(-closestDist/20), (1/10)));
 					            }
 					            break;    	
 			        	}
 	        		}
 	        	}
 	        	
-        	}
-        }
+        	} // if channel is defined
+        } // channel
 
-	}
+	}// end updating audio distance feedback
 
-    // check hits with objects
+
+    // check hits of hands with objects, if not creating a new one
     if (this.settingHeightOf == null && this.settingBaseOf == null) {
 	    for (i in objects) {
 	        obj = objects[i];
 	        if (obj.collidesWith(this.skeleton.LeftHand.three) && obj.collidesWith(this.skeleton.RightHand.three)) {
+
+                // if both hands collide with 3D HiddenObject than start carrying it
 	            if (this.carries == null || this.carries == obj)
 	                this.carry(obj);
 	        } else {
+
+                // if not then stop carrying
 	            if (this.carries == obj)
 	                this.stopCarrying();
+
+                // if just one hand collides with HiddenObject than call its "found" method
 	            if (obj.collidesWith(this.skeleton.LeftHand.three) || obj.collidesWith(this.skeleton.RightHand.three)) {
 	                obj.found();
 	            }
 	        }
-	    }
+	    }//i
     }
+
 
     // update height of newly created element
     if (this.settingHeightOf != null) {
@@ -190,14 +227,6 @@ User.prototype.updateFromKinect = function (user) {
         this.settingHeightOf.grow(null,Math.abs(delta),null);
     }
 
-    /*
-    // TEST FOR CALIBRATION
-    var caltest = document.getElementById('calTest');
-    if (caltest !== null) {
-	    caltest.style.top = (calibration.getTableY(this.skeleton['LeftHand'].three.position.z)) + 'px';
-	    caltest.style.left = (calibration.getTableX(this.skeleton['LeftHand'].three.position.x)) + 'px';
-    }
-    */
 };
 
 

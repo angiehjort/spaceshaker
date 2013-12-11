@@ -1,10 +1,10 @@
 function TouchArea(touchable) {
+    // Touch area constructor called once, when the page is created
+
     this.touchable = touchable;
 
     this.explained = false;
     this.who = null;
-    //this.newDiv = null; // not used?
-    //this.newObj = null; // not used?
 
     this.timestamp=0;
     this.timeResolution = 100; //ms
@@ -16,6 +16,9 @@ function TouchArea(touchable) {
 };
 
 
+
+
+
 TouchArea.prototype.iWannaPinch = function () {
     // this function is called everytime on pinch
     // first, identify the interacting user from Kinect. if no users, then quit
@@ -23,7 +26,7 @@ TouchArea.prototype.iWannaPinch = function () {
         explanation.setText('You do not exist! Dont touch the table! >__<');
         return;
     } else {
-        // else - set the last user
+        // else - set the last user to be the controlling user
         if (this.who == null) this.who = users[users.length - 1];
     }
 
@@ -69,12 +72,14 @@ TouchArea.prototype.iWannaPinch = function () {
             var x1 = event.gesture.touches[1].pageX;
             var y1 = event.gesture.touches[1].pageY;
 
-            // move the object in 3D accordingly
+            // we capure coordinates of the hands
             var moveTo = {
             x: ((this.who.skeleton.LeftHand.three.position.x + this.who.skeleton.RightHand.three.position.x) / 2),
             y: ((this.who.skeleton.LeftHand.three.position.y + this.who.skeleton.RightHand.three.position.y) / 2),
             z: ((this.who.skeleton.LeftHand.three.position.z + this.who.skeleton.RightHand.three.position.z) / 2)
             };
+
+            // move the object in 3D accordingly
             this.who.settingBaseOf.updatePosition3d(moveTo);
 
             // move the object in 2D accordingly
@@ -87,21 +92,31 @@ TouchArea.prototype.iWannaPinch = function () {
 
 }
 
+
+
+
+
+
 TouchArea.prototype.iWannaRelease = function () {
     // this function is called when you end touch event
     // switching from setting base of the object to setting its height
 
     if (this.who!=null && this.who.settingBaseOf!=null) {
         explanation.setText(this.explained?null:'Move one hand up to set the height. Then swipe to cut off the box');
+
         this.who.settingHeightOf = this.who.settingBaseOf;
         this.who.settingBaseOf = null;
     }
 }
 
 
+
+
+
+
 TouchArea.prototype.iWannaSwipe = function () {
-    // this function is called during the swipe touch event (closer to start)
-    // if setting the height of the object now, then save the height
+    // this function is called during the swipe touch event (at the start of swipe)
+    // if user is setting the height of the object now, then save the height
 
     if (this.who!=null && this.who.settingHeightOf!=null){
     explanation.setText(this.explained?null:"Box created. Create more!");

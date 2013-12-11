@@ -24,13 +24,16 @@
 
         var scene;
         var audio;
-        var calibration;
+        var calibration = null;
+        var needCalibration = false;
 
         var users = new Array();
         var objects = new Array();
         var mute = false;
 
         var boundaries;
+
+
 
 
         function initMain() {
@@ -45,8 +48,12 @@
 
             touchArea = new TouchArea(document.getElementById('touch'));
             explanation = new Explanation(document.getElementById('explanation'));
-            calibration = new Calibration();
-            //document.getElementById('main').style.visibility = 'visible';
+
+            if (needCalibration) {
+                calibration = new Calibration();
+            }else{
+                document.getElementById('main').style.visibility = 'visible';
+            }
             
             audio = new Audio();
             audio.createChannel('left', 'oscillator', { freq: 1000, gain: 1});
@@ -59,9 +66,10 @@
                     z: {min: 1200,max: 1600}
                 }, {w: 200,h: 200,d: 200}
             );
-
-
         }
+
+
+
 
         function initZig() {
             zig.explained = false;
@@ -76,7 +84,10 @@
                     }
                 }
             });
-        }
+        }//initZig()
+
+
+
 
         function initThree() {
 
@@ -110,194 +121,39 @@
                 renderer.render(scene, camera);
             }
             render();
-        }
+        }//initThree()
 
 
 
-       document.addEventListener('DOMContentLoaded', initMain, false);
+
+        document.addEventListener('DOMContentLoaded', initMain, false);
     </script>
-    <style>
-* {
-        overflow: hidden;
-}
 
-body {
-        margin: 0;
-        padding: 0;
-        background-image: url('texture.jpg');
-        background-repeat: repeat;
-        overflow: hidden;
-}
-
-#three {
-        position: fixed;
-        left: 50%;
-        margin-left: -15%;
-        margin-top: 50px;
-        width: 30%;
-        height: 50%;
-        background: #fffbc9;
-        border: 1px solid grey;
-        opacity: 0.8;
-        border-radius: 4px;
-}
-
-#touch {
-        overflow: hidden;
-        position: fixed;
-        top: 0px;
-        left: 0px;
-        width: 100%;
-        height: 100%;
-}
-
-#explanation {
-        text-align: center;
-        width: inherit;
-        bottom: 20px;
-        font-size: 100%;
-        font-family: sans-serif;
-        position: absolute;
-        background: #fff9b6;
-        opacity: 0.8;
-}
-
-.square {
-        float: left;
-        width: 100px;
-        height: 100px;
-        opacity: 0.4;
-        border: 5px inset grey;
-        border-radius: 4px;
-        position: absolute;
-}
-
-.newDiv {
-        border-radius: 20px;
-}
-
-audio {
-        display: none;
-}
-
-canvas {
-        -webkit-transform: scaleY(-1);
-}
-
-#calibration .calSpot {
-        width: 80px;
-        height: 80px;
-        background: yellow;
-        opacity: 0.7;
-        border-radius: 100%;
-        font-family: sans-serif;
-        text-align: center;
-        font-size: 100%;
-        line-height: 80px;
-        position: absolute;
-        z-index: 1000;
-        display: none;
-}
-
-#calibration #calOne {
-        top: 0px;
-        left: 0px;
-}
-
-#calibration #calTwo {
-        bottom: 30px;
-        right: 30px;
-}
-
-#calTest {
-        width: 50px;
-        height: 50px;
-        background: yellow;
-        opacity: 0.7;
-        position: absolute;
-}
-
-#main {
-        visibility: hidden;
-}
-
-/* SETTINGS */
-#settings input {
-        width: 120px;
-        height: 40px;
-        margin: 20px 0;
-        text-align: center;
-        font-size: 100%;
-        font-family: sans-serif;
-        background: #ff8000;
-        border-radius: 5;
-        opacity: 0.8;
-        border: 3px inset #d4880d;
-        display: block;
-}
-
-#settings div {
-		float: left;
-		padding: 10px;
-}
-
-#settings {
-        height: 300px;
-        bottom: 20px;
-        right: 20px;
-        position: absolute;
-        background: #fff9b6;
-        opacity: 0.8;
-}
-
-
-
-/* GLOW ANIMATION */
-
-.ani {
-    background-color: yellow;
-    border: 1px solid transparent;
-    -webkit-transition: border 0.1s linear, box-shadow 0.1s linear;
-       -moz-transition: border 0.1s linear, box-shadow 0.1s linear;
-            transition: border 0.1s linear, box-shadow 0.1s linear;
-}
-
-.active {
-    border-color: blue;
-    -webkit-box-shadow: 0 0 20px blue;
-       -moz-box-shadow: 0 0 20px blue;
-            box-shadow: 0 0 20px blue;
-}
-</style>
 </head>
 
 <body>
 
     <div id="calibration">
-                <div id="calOne" class="calSpot">Touch me</div>
-                <div id="calTwo" class="calSpot">Touch me</div>
+        <div id="calOne" class="calSpot">Touch me</div>
+        <div id="calTwo" class="calSpot">Touch me</div>
+    </div>
+
+    <div id="main">
+        <audio id="audio_red" src="audio/red.wav" preload="auto"></audio>
+        <audio id="audio_green" src="audio/green.wav" preload="auto"></audio>
+        <audio id="audio_blue" src="audio/blue.wav" preload="auto"></audio>
+        <audio id="audio_ping" src="audio/ping.wav" preload="auto"></audio>
+        <audio id="soundYe" src="audio/horse.mp3" preload="auto"></audio>
+        <audio id="soundNo" src="audio/buzz.mp3" preload="auto"></audio>
+
+        <div id="three"></div>
+        <div id="touch">
+            <div id="explanation"> Hi! Stand here, so that Kinect can find you </div>
         </div>
-
-        <div id="main">
-
-            <audio id="audio_red" preload="auto"></audio>
-            <audio id="audio_green" src="audio/green.wav" preload="auto"></audio>
-            <audio id="audio_blue" src="audio/blue.wav" preload="auto"></audio>
-            <audio id="audio_ping" src="audio/ping.wav" preload="auto"></audio>
-            <audio id="soundYe" src="audio/horse.mp3" preload="auto"></audio>
-            <audio id="soundNo" src="audio/buzz.mp3" preload="auto"></audio>
-
-            <div id="three"></div>
-            <div id="touch">
-                <div id="explanation">
-                    Hi! Stand here, so that Kinect can find you
-                </div>
-
-            </div>
-            <div id="settings"></div>
-
-        </div>
+        <div id="settings"></div>
+    </div>
 
 </body>
 
+<link rel='stylesheet' href='style.css'>
 </html>
