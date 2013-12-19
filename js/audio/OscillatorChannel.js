@@ -69,7 +69,7 @@ OscillatorChannel.prototype.setWaveType = function(type, setting) {
  ************/
 OscillatorChannel.prototype.updateInterval = function(period, portion){
     this.pulseLength = period * portion;
-	//console.log(this.pulseChangeAllowed);
+    
     // play at least one whole pulse before upgrading pulse-length property
     if (this.pulseChangeAllowed) {
     	this.pulseStop();

@@ -101,6 +101,7 @@ User.prototype.startCarrying = function (obj) {
     // stop proximity audio, update vibro feedback
 
     this.carries = obj;
+    
     //audio.mute();
     //vibro.carryOn = true;
     //vibro.refresh();
@@ -160,6 +161,7 @@ User.prototype.updateFromKinect = function (user) {
         channelNames = { 'left': 'Left', 'right': 'Right' };
         
         // update each well-defined channel
+        // future versions this should be done with event/handler/listener
         for (channel in channelNames) {
         	if (typeof audio.channels[channel] !== 'undefined') {
         		

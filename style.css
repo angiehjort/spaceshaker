@@ -131,4 +131,11 @@ canvas {
         opacity: 0.8;
 }
 
+#settings input.active {
+     border-color: blue;
+     -webkit-box-shadow: 0 0 20px blue;
+     -moz-box-shadow: 0 0 20px blue;
+     box-shadow: 0 0 20px blue;
+}
+
 

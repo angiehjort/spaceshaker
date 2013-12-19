@@ -18,7 +18,6 @@
     <script src='js/TouchArea.js'></script>
     <script src='js/Explanation.js'></script>
     <script src='js/Calibration.js'></script>
-    <script src='js/Settings.js'></script>
 
     <script type="text/javascript">
 
@@ -51,7 +50,7 @@
 
             if (needCalibration) {
                 calibration = new Calibration();
-            }else{
+            } else {
                 document.getElementById('main').style.visibility = 'visible';
             }
             
@@ -108,8 +107,6 @@
             camera.position.z = 0;
             camera.lookAt(new THREE.Vector3(0, 0, 4000));
             camera.rotation.z = 0 * Math.PI / 180;
-            //camera.scale = new THREE.Vector3( 1, -1, 1 );
-            //camera.translateX(-1000);
 
             // lights
             light.position.set(10, 0, 10);
@@ -123,6 +120,15 @@
             render();
         }//initThree()
 
+		function initSettings() {
+			
+			$('#settings').on('click', 'input', function() {
+				channel = this.parentNode.dataset.channel;
+				type    = this.dataset.type;
+				audio.channels[channel].setWaveType(type, !audio.channels[channel].waveType[type]);
+			});
+			
+		};
 
 
 
